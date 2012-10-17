@@ -1,3 +1,5 @@
+package game;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -6,15 +8,13 @@ import java.util.Timer;
 
 import org.json.*;
 
+import server.MessageServer;
+
 public class Main {
 	private static Calendar m_client1GameEndTime, m_client2GameTime;
 	
 	public enum Attributes { //Add more as we add more to game
-		LOOKS, CHARM, INTELLIGENCE, HONESTY
-	}
-	
-	public enum LookFeatures {
-		HAIR_COLOUR, EYE_COLOUR, CLOTHING 
+		INTELLIGENCE, LOOKS, CHARM, HONESTY, STRENGTH, KINDNESS, HUMOUR, ENTHUSIASM, ADAPTABILITY, RELIABILITY, GENEROSITY
 	}
 	
 	public enum HairColour {
@@ -25,21 +25,26 @@ public class Main {
 		BROWN, BLUE, GREEN, GREY
 	}
 	
+	public enum BodyType {
+		ATHLETIC, SKINNY, MUSCULAR, AVERAGE, OVERWEIGHT
+	}
+	
+	//TODO:Remove this and let this change as player levels up???
 	public enum Clothing {
 		SUIT, BEACHWEAR, CLUBWEAR, CASUAL
 	}
 	
 	public List<Character> characters;
 
-	// TODO: PUT THIS INTO A NON-STAIC CLASS
+	// TODO: PUT THIS INTO A NON-STATIC CLASS
 	public static void main(String[] args) throws JSONException {
-		System.out.println("hi");
-		JSONObject jt = new JSONObject("{\"blah\" : \"blah\"}");
-	
-		jt.put("ruth", "mierowsky");
-		if (jt.has("ruth"))
-			System.out.println(jt.getString("ruth").toString());
-		
+//		System.out.println("hi");
+//		JSONObject jt = new JSONObject("{\"blah\" : \"blah\"}");
+//	
+//		jt.put("ruth", "mierowsky");
+//		if (jt.has("ruth"))
+//			System.out.println(jt.getString("ruth").toString());
+//		
 		MessageServer listenServer = new MessageServer();
 		Thread t = new Thread(listenServer);
 		t.start();
@@ -64,7 +69,7 @@ public class Main {
 			// check game ended?
 			if (Calendar.getInstance().after(Main.m_client1GameEndTime))
 			{
-				//update games states, determine if player won/lost etc
+				//update games states, determine if player won/lost, how many points they got etc
 				client1OutgoingMsgs.add("You won!");
 				client2OutgoingMsgs.add("Player 1 won the girl!");
 			}

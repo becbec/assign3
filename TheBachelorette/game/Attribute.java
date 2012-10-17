@@ -1,8 +1,11 @@
+package game;
 public class Attribute {
 	private String attributeType;
 	private int attributeValue;
 	
-	public Attribute(){
+	public Attribute(String attributeType, int attributeValue){
+		this.attributeType = attributeType;
+		this.attributeValue = attributeValue;
 	}
 
 	public String getAttributeType() {

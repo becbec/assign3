@@ -1,3 +1,4 @@
+package server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.ServerSocket;
@@ -20,7 +21,7 @@ public class MessageServer implements Runnable {
 		this.m_client1Queue = new ConcurrentLinkedQueue<String>();
 		this.m_client2Queue = new ConcurrentLinkedQueue<String>();
 		try {
-			this.m_socket = new ServerSocket(1337);
+			this.m_socket = new ServerSocket(1338);
 		}
 		catch (Exception e) {
 			System.err.println("broken in MessageServer.init");

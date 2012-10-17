@@ -1,6 +1,12 @@
+package game;
 public class Look {
 	private String lookType;
-	private int lookValue;
+	private String lookValue;
+	
+	public Look(String lookType, String lookValue){
+		this.lookType = lookType;
+		this.lookValue = lookValue;
+	}
 	
 	public Look(){
 	}
@@ -13,11 +19,11 @@ public class Look {
 		this.lookType = lookType;
 	}
 
-	public int getLookValue() {
+	public String getLookValue() {
 		return lookValue;
 	}
 
-	public void setLookValue(int lookValue) {
+	public void setLookValue(String lookValue) {
 		this.lookValue = lookValue;
 	}
 	
