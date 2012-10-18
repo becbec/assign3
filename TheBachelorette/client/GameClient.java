@@ -230,7 +230,8 @@ public class GameClient {
 		}
 	}
 	
-	private static List<PlayerCharacter> setGirls(List<PlayerCharacter> girls) {
+	private static List<PlayerCharacter> setGirls(List<PlayerCharacter> girls) { //TODO: This should be on the server, not the client, 
+		//otherwise the girls wont be the same for both clients! Robin says fuck off, but not before fixing stuff
 		Random generator = new Random();
 		List<Attribute> aList = new ArrayList<Attribute>();
 		List<Look> aLook = new ArrayList<Look>();

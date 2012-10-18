@@ -216,7 +216,7 @@ public class GameServer implements Runnable {
 			p.updateStage(3);
 		} else if (stage == 3) {
 			if (p.isAnswerCorrect(msg)) {
-				message = "Congratulations, that is the correct answer! You have got that girls number";
+				message = "Congratulations, that is the correct answer! You have got that girls number.\n Press Enter to continue...";
 				j.put("Message", message);
 				p.updateStage(4);
 			} else if (!p.isAnswerCorrect(msg)) {

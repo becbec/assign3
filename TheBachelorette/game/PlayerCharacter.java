@@ -18,8 +18,8 @@ public class PlayerCharacter {
 		this.name = name;
 		this.attributes = new ArrayList<Attribute>(attributes);
 		this.looks = new ArrayList<Look>(looks);
-		girlsSeen = new int[2];
-		for (int i = 0; i < 2; i++) {
+		girlsSeen = new int[7];
+		for (int i = 0; i < 7; i++) {
 			girlsSeen[i] = 0;
 		}
 		stage = 0;
@@ -61,7 +61,7 @@ public class PlayerCharacter {
 	}
 	
 	public boolean isGirlSeen(int i) {
-		if (girlsSeen[i] == 0) {
+		if (girlsSeen[i] == 0) { //TODO: This is causing an exception, fix this
 			return false;
 		}
 		
