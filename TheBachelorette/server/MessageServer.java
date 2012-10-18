@@ -1,8 +1,16 @@
 package server;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
+import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.json.*;
@@ -10,16 +18,19 @@ import org.json.*;
 public class MessageServer implements Runnable {
 	
 	public Queue<String> m_incomingMsgQueue;
-	public Queue<String> m_client1Queue;
-	public Queue<String> m_client2Queue;
+	public Queue<String> m_client1OutgoingQueue;
+	public Queue<String> m_client2OutgoingQueue;
 	private int m_player = 1;
 	private ServerSocket m_socket;
+	public List<Socket> connections;
+	public HashMap<String, Socket> m_connections;
 	
 	public MessageServer()
 	{
 		this.m_incomingMsgQueue = new ConcurrentLinkedQueue<String>();
-		this.m_client1Queue = new ConcurrentLinkedQueue<String>();
-		this.m_client2Queue = new ConcurrentLinkedQueue<String>();
+		this.m_client1OutgoingQueue = new ConcurrentLinkedQueue<String>();
+		this.m_client2OutgoingQueue = new ConcurrentLinkedQueue<String>();
+		this.connections = new ArrayList<Socket>();
 		try {
 			this.m_socket = new ServerSocket(1338);
 		}
@@ -30,20 +41,43 @@ public class MessageServer implements Runnable {
 	
 	public void run()
 	{
+		try {
+			this.m_socket.setSoTimeout(1000);
+				
+		} catch (SocketException se) {
+			se.printStackTrace();
+		}
 		while (true) {
 			try {
-			Socket listenSocket = this.m_socket.accept();
-			if (listenSocket != null) {
-				HandleRequest requestHandler = new HandleRequest(listenSocket, this, m_player++);
-				Thread t = new Thread(requestHandler);
-				t.start();
+
+				Socket listenSocket = this.m_socket.accept();
+				if (listenSocket != null) {
+					//add to list of active connection
+					connections.add(listenSocket);
+					HandleRequest requestHandler = new HandleRequest(listenSocket, this, ++m_player);
+					Thread t = new Thread(requestHandler);
+					t.start();
+				}
 			}
+			catch (SocketTimeoutException se) {
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+					break;
+				}
 			}
 			catch (Exception e) {
 				System.err.println("broken in MessageServer.run");
 			}
 		}
-
+		
+		for (Socket s : this.connections) {
+			try {
+				s.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 }
 
@@ -65,18 +99,25 @@ final class HandleRequest implements Runnable
 	{
 		try {
 			// TODO:
-			this.m_input = this.m_socket.getInputStream();
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+                    this.m_socket.getInputStream()));
 			
+			if (m_player == 1)
+				this.m_msgServer.m_client1OutgoingQueue.add("{\"playerID\" : \"1\" }");
+			else if (m_player == 2)
+				this.m_msgServer.m_client2OutgoingQueue.add("{\"playerID\" : \"2\" }");
+
 			while (true)
 			{
-				this.m_input.read();  // remember this blocks! Make client send something every 1-100 ms
-				this.m_msgServer.m_incomingMsgQueue.add(null);
+				 // remember this blocks! Make client send something every 1-100 ms
+				this.m_msgServer.m_incomingMsgQueue.add(br.readLine());
 				
 				// TODO:
-				if (m_player == 1 && !this.m_msgServer.m_client1Queue.isEmpty()) 
+				if (m_player == 1 && !this.m_msgServer.m_client1OutgoingQueue.isEmpty()) 
 				{
+					// TODO: this is a stub, don't just write out a NULL
 					this.m_socket.getOutputStream().write(null);
-				} else if (m_player == 2 && !this.m_msgServer.m_client2Queue.isEmpty())
+				} else if (m_player == 2 && !this.m_msgServer.m_client2OutgoingQueue.isEmpty())
 				{
 					// this.m_socket.getOutputStream().write(this.m_msgServer.m_client2Queue.remove());
 				}

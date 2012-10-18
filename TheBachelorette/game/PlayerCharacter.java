@@ -54,7 +54,6 @@ public class PlayerCharacter {
 	}
 	
 	public boolean isGirlSeen(int i) {
-		
 		if (girlsSeen[i] == 0) {
 			return false;
 		}

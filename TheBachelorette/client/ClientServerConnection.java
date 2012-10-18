@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -37,11 +38,13 @@ public class ClientServerConnection implements Runnable {
 		try {
 			DataOutputStream outToServer = new DataOutputStream(m_socket.getOutputStream());
 			BufferedReader inFromServer = new BufferedReader(new InputStreamReader(m_socket.getInputStream()));
+			PrintWriter out = new PrintWriter(m_socket.getOutputStream(), true);
+			
 			while (true) {
 				m_outgoingMsgQueue.add("{\"blah\" : \"blah\"}");
 				//send all outgoing messages
 				while (!m_outgoingMsgQueue.isEmpty())  {
-					outToServer.writeBytes(m_outgoingMsgQueue.remove());
+					out.println(m_outgoingMsgQueue.remove());
 				}
 				
 				//read incoming messages and put into incoming queue
@@ -51,6 +54,7 @@ public class ClientServerConnection implements Runnable {
 				
 			}
 		} catch (Exception e) {
+			System.err.println(e.getMessage());
 			System.err.println("broke in client server connection - run");
 			System.err.println(e.getMessage());
 		}
@@ -82,24 +86,29 @@ public class ClientServerConnection implements Runnable {
  
  
  Message Types (client to server)
+ CHOOSING CHARACTER
+"ChoosingCharacter" :
+	Att1 : blah
+	...
+	
  
  CHOOSING GIRL
- MessageType: ChoosingGirl
- Player: playernumber
- Girl: girlnumber
+"ChoosingGirl" :
+ 	Player: playernumber
+ 	Girl: girlnumber
  
- CHOOSING ROUND TYPE
- MessageType: ChoosingRoundType
- Player : playernumber
- RoundType : roundtype
+CHOOSING ROUND TYPE
+ChoosingRoundType
+	Player : playernumber
+ 	RoundType : roundtype
  
  
  SUBMITTING ANSWER
- MessageType : SubmittingAnswer
- Player: playernumber
- Girl: Chosengirl //do we need this or will server know this
- server will store current points? otherwise current points
- Answer: answer
+SubmittingAnswer
+	Player: playernumber
+ 	Girl: Chosengirl //do we need this or will server know this
+ 	server will store current points? otherwise current points
+ 	Answer: answer
  
 
  
