@@ -37,7 +37,7 @@ public class ProcessIncomingMessages implements Runnable {
 				
 				
 				
-				//System.out.println(csConnection.m_incomingMsgQueue.remove()); 
+				//System.out.println(csConnection.m_initcomingMsgQueue.remove()); 
 			}
 			try {
 				Thread.sleep(1);
