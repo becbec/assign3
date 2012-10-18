@@ -37,16 +37,24 @@ public class GameServer implements Runnable {
 		SUIT, BEACHWEAR, CLUBWEAR, CASUAL
 	}
 	
-	public List<PlayerCharacter> characters;
 	MessageServer listenServer;
+	public List<PlayerCharacter> characters;
+	public List<List<String>> clientOutgoingMsgs;
+	/*
 	List<String> client1OutgoingMsgs;
 	List<String> client2OutgoingMsgs;
+	*/
 	
 	public GameServer() {
 		listenServer = new MessageServer();
 		this.m_msgServerThread = new Thread(listenServer);
 		m_msgServerThread.start();	
 		characters = new ArrayList<PlayerCharacter>();
+		clientOutgoingMsgs = new LinkedList<List<String>>();
+		/*
+		client1OutgoingMsgs = new LinkedList<String>();
+		client2OutgoingMsgs = new LinkedList<String>();
+		*/
 	}
 
 	 public static void main(String[] args) {
@@ -72,8 +80,8 @@ public class GameServer implements Runnable {
 	public void run() {
 		while (true)
 		{
-			client1OutgoingMsgs = new LinkedList<String>();
-			client2OutgoingMsgs = new LinkedList<String>();
+			for (List<String> clientMsgs : clientOutgoingMsgs)
+				clientMsgs.clear();
 			
 			if (!listenServer.m_incomingMsgQueue.isEmpty()) {
 				// parse incoming message queue
@@ -96,7 +104,7 @@ public class GameServer implements Runnable {
 				try {
 					j = new JSONObject(msg);
 					if (j.has("Character")) { //Storing the characters players have created
-						String pid = j.getString("PlayerID");
+						// String pid = j.getString("PlayerID");
 						JSONObject jo = j.getJSONObject("Character");
 						String name = jo.getString("Name");
 						List<Attribute> la = new ArrayList<Attribute>();
@@ -118,29 +126,34 @@ public class GameServer implements Runnable {
 						}
 						
 						PlayerCharacter p = new PlayerCharacter(name, la, ll);
-						characters.add(Integer.parseInt(pid)-1, p);
+						characters.add(p);
+						// characters.add(Integer.parseInt(pid)-1, p);
+						
+						List<String> outgoingMsgs = new LinkedList<String>();
+						this.clientOutgoingMsgs.add(outgoingMsgs);
+						outgoingMsgs.add("{\"PlayerID\" : \"" + this.clientOutgoingMsgs.size() + "\" }");
 						
 						if (characters.size() == 2) {
+							for (int i = 0; i < characters.size(); i++) {
+								clientOutgoingMsgs.get(i).add(playGame(characters.get(i), null).toString());
+							}
+							/*
 							client1OutgoingMsgs.add(playGame(characters.get(0), null).toString());
 							client2OutgoingMsgs.add(playGame(characters.get(1), null).toString());
+							*/
 						}
 						
 					} else {
-
-						System.out.println("failed here?"+msg);
-						if (j.get("PlayerID").equals("1")) {
-							 String m = playGame(characters.get(0), null).toString();
-							client1OutgoingMsgs.add(m); //TODO: Convert to JSON first
-						} else if (j.get("PlayerID").equals("2")) {
-							String m = playGame(characters.get(1), null).toString();
-							client2OutgoingMsgs.add(m); //TODO: Convert to JSON first
-						}
+						int index = Integer.parseInt(j.getString("PlayerID"))-1;
+						clientOutgoingMsgs.get(index).add(playGame(characters.get(index),j.getString("Message")).toString());
+						
 					}
+				
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
 			}
-				
+				// TODO: make more generic
 				GameServer.m_client1GameEndTime = Calendar.getInstance();
 				GameServer.m_client1GameEndTime.add(Calendar.SECOND, 30);
 			}
@@ -155,13 +168,16 @@ public class GameServer implements Runnable {
 			*/
 			
 			// check client2 game
-			
+			for (int i = 0; i < characters.size(); i++)
+				listenServer.m_clientOutgoingQueues.get(listenServer.connections.get(i)).addAll(this.clientOutgoingMsgs.get(i));
+			/*
 			// update client1
-			listenServer.m_client1OutgoingQueue.addAll(client1OutgoingMsgs);
+			
+			// listenServer.m_client1OutgoingQueue.addAll(client1OutgoingMsgs);
 			
 			// update client2
 			listenServer.m_client2OutgoingQueue.addAll(client2OutgoingMsgs);
-			
+			*/
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {

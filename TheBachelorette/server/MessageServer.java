@@ -19,19 +19,24 @@ import org.json.*;
 public class MessageServer implements Runnable {
 	
 	public Queue<String> m_incomingMsgQueue;
+	/*
 	public Queue<String> m_client1OutgoingQueue;
 	public Queue<String> m_client2OutgoingQueue;
+	*/
 	private int m_player = 0;
 	private ServerSocket m_socket;
 	public List<Socket> connections;
-	public HashMap<String, Socket> m_connections;
+	public HashMap<Socket,Queue<String>> m_clientOutgoingQueues;
 	
 	public MessageServer()
 	{
 		this.m_incomingMsgQueue = new ConcurrentLinkedQueue<String>();
+		/*
 		this.m_client1OutgoingQueue = new ConcurrentLinkedQueue<String>();
 		this.m_client2OutgoingQueue = new ConcurrentLinkedQueue<String>();
+		*/
 		this.connections = new ArrayList<Socket>();
+		this.m_clientOutgoingQueues = new HashMap<Socket,Queue<String>>();
 		try {
 			this.m_socket = new ServerSocket(1338);
 		}
@@ -56,6 +61,9 @@ public class MessageServer implements Runnable {
 					//add to list of active connection
 					connections.add(listenSocket);
 					HandleRequest requestHandler = new HandleRequest(listenSocket, this, ++m_player);
+					ConcurrentLinkedQueue<String> msgQueue = new ConcurrentLinkedQueue<String>();
+					this.m_clientOutgoingQueues.put(listenSocket, msgQueue);
+					
 					Thread t = new Thread(requestHandler);
 					t.start();
 				}
@@ -104,16 +112,22 @@ final class HandleRequest implements Runnable
                     this.m_socket.getInputStream()));
 			PrintWriter out = new PrintWriter(m_socket.getOutputStream(),true);
 			
+			/*
 			if (m_player == 1)
 				this.m_msgServer.m_client1OutgoingQueue.add("{\"PlayerID\" : \"1\" }");
 			else if (m_player == 2)
 				this.m_msgServer.m_client2OutgoingQueue.add("{\"PlayerID\" : \"2\" }");
-
+			*/
 			while (true)
 			{
 				 // remember this blocks! Make client send something every 1-100 ms
 				this.m_msgServer.m_incomingMsgQueue.add(br.readLine());
 				
+				Queue<String> outgoingQueue = this.m_msgServer.m_clientOutgoingQueues.get(this.m_socket);
+				if (!outgoingQueue.isEmpty())
+					out.println(outgoingQueue.remove());
+				
+				/*
 				// TODO:
 				if (m_player == 1 && !this.m_msgServer.m_client1OutgoingQueue.isEmpty()) 
 				{
@@ -125,6 +139,7 @@ final class HandleRequest implements Runnable
 					// this.m_socket.getOutputStream().write(this.m_msgServer.m_client2Queue.remove());
 					out.println(this.m_msgServer.m_client2OutgoingQueue.remove());
 				}
+				*/
 			}
 		}
 		catch (Exception e) {
