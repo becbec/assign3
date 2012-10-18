@@ -179,7 +179,7 @@ public class GameServer implements Runnable {
 		JSONObject j = new JSONObject();
 		String message = "";
 		if (stage == 0) {
-			message = "Which girl would you like to try and get a number from?\n" +
+			message = "\n\nWhich girl would you like to try and get a number from?\n" +
 					"Girl1, Girl2, Girl3, Girl4, Girl5, Girl6\nType a number to select a girl\n";
 			j.put("Message", message);
 			p.updateStage(1);
