@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Timer;
 
@@ -39,7 +40,9 @@ public class GameServer implements Runnable {
 	
 	MessageServer listenServer;
 	public List<PlayerCharacter> characters;
+	public List<PlayerCharacter> girls;
 	public List<List<String>> clientOutgoingMsgs;
+	
 	/*
 	List<String> client1OutgoingMsgs;
 	List<String> client2OutgoingMsgs;
@@ -50,6 +53,8 @@ public class GameServer implements Runnable {
 		this.m_msgServerThread = new Thread(listenServer);
 		m_msgServerThread.start();	
 		characters = new ArrayList<PlayerCharacter>();
+		girls = new ArrayList<PlayerCharacter>();
+		girls = setGirls(girls);
 		clientOutgoingMsgs = new LinkedList<List<String>>();
 		/*
 		client1OutgoingMsgs = new LinkedList<String>();
@@ -200,11 +205,16 @@ public class GameServer implements Runnable {
 			j.put("Message", message);
 			p.updateStage(1);
 		} else if (stage == 1 && p.isGirlSeen(Integer.parseInt(msg))) {
+			String content ="";
+			for (int i = 0; i < girls.size(); i++) {
+				if (!p.isGirlSeen(i)) {
+					content+="Girl"+i+"  ";
+				}
+			}
 			message = "You have already got that girl's number!\nChoose another girl you would like to try and get a number from.\n" +
-			"Girl1, Girl2, Girl3, Girl4, Girl5, Girl6\nType a number to select a girl\n";
+			content+"\n";
 			j.put("Message", message);
 		} else if (stage == 1 && !p.isGirlSeen(Integer.parseInt(msg))) {
-			p.setGirlSeen(Integer.parseInt(msg));
 			message = "What would you like to use to impress a girl and get her number?\n" +
 					"1. Show your intelligence    2. Use a cheesy pick up line    3. Reveal the truth    4. Tell a joke" +
 					"    5. Buy her a drink\nType a number to select what to use\n";
@@ -216,9 +226,22 @@ public class GameServer implements Runnable {
 			p.updateStage(3);
 		} else if (stage == 3) {
 			if (p.isAnswerCorrect(msg)) {
-				message = "Congratulations, that is the correct answer! You have got that girls number.\n Press Enter to continue...";
+				message = "Congratulations, that is the correct answer!";// You have got that girls number.\n Press Enter to continue...";
+				p.updateCurrentPoints();
+				if (p.getCurrentPoints() < 10) {
+					message += "However, you are now at "+p.getCurrentPoints()+"you still need "+(10-p.getCurrentPoints())+ " points in order to get this girls number."
+					+" You will need to choose something else to impress a girl\nWhat would you like to use to impress a" +
+							" girl and get her number?\n 1. Show your intelligence    2. Use a cheesy pick up line   " +
+							" 3. Reveal the truth    4. Tell a joke    5. Buy her a drink\nType a number to select what to use\n";
+					p.updateStage(2);
+				}else {
+					message+=" You have also go enough points and been lucky enough to get this girls number! Press Enter to continue.";
+					p.updateStage(4);
+				}
+				
 				j.put("Message", message);
-				p.updateStage(4);
+				
+				p.setGirlSeen();
 			} else if (!p.isAnswerCorrect(msg)) {
 				message = "That is not the correct answer.\n Would you like to: 1. Try again at using this challenge to impress a girl, or\n" +
 						"2. Go back impress a girl using something else. Type a number to select your choice.";
@@ -227,8 +250,14 @@ public class GameServer implements Runnable {
 			}
  		} else if (stage == 4) {
  			p.updateNumberOfGirls();
+ 			String content ="";
+			for (int i = 0; i < girls.size(); i++) {
+				if (!p.isGirlSeen(i)) {
+					content+="Girl"+i+"  ";
+				}
+			}
  			message = "Which girl would you like to try and get another number from?\n" +
-			"Girl1, Girl2, Girl3, Girl4, Girl5, Girl6\nType a number to select a girl\n";
+			content+"\nType a number to select a girl\n";
  			j.put("Message", message);
  			p.updateStage(1);
  		} else if (stage == 5) {
@@ -237,7 +266,6 @@ public class GameServer implements Runnable {
  				j.put("Message", message);
  				p.updateStage(3);
  			} else if (Integer.parseInt(msg) == 2) {
- 				p.setGirlSeen(Integer.parseInt(msg));
  				message = "What would you like to use to impress a girl and get her number?\n" +
 				"1. Show your intelligence    2. Use a cheesy pick up line    3. Reveal the truth    4. Tell a joke" +
 				"    5. Buy her a drink\nType a number to select what to use\n";
@@ -247,6 +275,53 @@ public class GameServer implements Runnable {
  		}
 		
 		return j;
+	}
+	
+	private static List<PlayerCharacter> setGirls(List<PlayerCharacter> girls) { //TODO: This should be on the server, not the client, 
+		//otherwise the girls wont be the same for both clients! Robin says fuck off, but not before fixing stuff
+		Random generator = new Random();
+		List<Attribute> aList = new ArrayList<Attribute>();
+		List<Look> aLook = new ArrayList<Look>();
+		int n;
+		List<Integer> seen = new ArrayList<Integer>();
+		
+		for (int i = 0; i < 2; i++) {
+			String name = "girl"+i;
+			
+			// Girls choose n things they don't like. and if a player completes a challenge then you take 1/5 their score
+			// ie less positive points
+			
+			for (int j = 0; j < 2; j++) {
+				n = generator.nextInt(Attributes.values().length);
+				while (seen.contains(n)){
+					n = generator.nextInt(Attributes.values().length);
+				}
+				seen.add(n);
+				aList.add(new Attribute(Attributes.values()[n].toString(), 5));
+			}
+			
+			n = generator.nextInt(HairColour.values().length);
+			aLook.add(new Look(HairColour.values()[n].toString(), "1"));
+			n = generator.nextInt(EyeColour.values().length);
+			aLook.add(new Look(EyeColour.values()[n].toString(), "1"));
+			n = generator.nextInt(BodyType.values().length);
+			aLook.add(new Look(BodyType.values()[n].toString(), "1"));
+			
+			girls.add(new PlayerCharacter(name,aList,aLook));
+		}
+		
+		// overwrite different looks
+		for (int i = 0; i < 3; i++) {
+			String name = "girl"+i;
+			aList.add(new Attribute(Attributes.CHARM.toString(), 5));
+			aLook.add(new Look(HairColour.BLACK.toString(), "1"));
+			aLook.add(new Look(EyeColour.BLUE.toString(), "1"));
+			aLook.add(new Look(BodyType.ATHLETIC.toString(), "1"));
+			
+			girls.add(new PlayerCharacter(name, aList, aLook));
+		}
+		
+		return girls;
 	}
 	
 }

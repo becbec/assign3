@@ -13,6 +13,8 @@ public class PlayerCharacter {
 	private Challenge ch;
 	private int challengeNumber;
 	private int numberOfGirls;
+	private int currentGirl;
+	private double currentPoints;
 	
 	public PlayerCharacter(String name, List<Attribute> attributes, List<Look> looks){
 		this.name = name;
@@ -68,8 +70,8 @@ public class PlayerCharacter {
 		return true;
 	}
 	
-	public void setGirlSeen(int i) {
-		girlsSeen[i] = 1;
+	public void setGirlSeen() {
+		girlsSeen[currentGirl] = 1;
 	}
 	
 	public int stageNumber() {
@@ -84,23 +86,23 @@ public class PlayerCharacter {
 		challengeNumber = n;
 		
 		if (n == 1) {
+			currentGirl = 1;
 			ch = new IntelligenceChallenge();
-			return ch.createChallenge();
 		} else if (n == 2) {
+			currentGirl = 2;
 			ch = new CharmChallenege();
-			return ch.createChallenge();
 		} else if (n == 3) {
+			currentGirl = 3;
 			ch = new HonestyChallenge();
-			return ch.createChallenge();
 		} else if (n == 4) {
+			currentGirl = 4;
 			ch = new HumourChallenege();
-			return ch.createChallenge();
 		} else if (n == 5) {
+			currentGirl = 5;
 			ch = new GenerosityChallenge();
-			return ch.createChallenge();
 		}
 		
-		return null;
+		return ch.createChallenge();
 	}
 	
 	public int getChallengeNumber() {
@@ -117,5 +119,35 @@ public class PlayerCharacter {
 	
 	public void updateNumberOfGirls() {
 		numberOfGirls++;
+	}
+	
+	public String updateCurrentPoints() {
+		double value = 0;
+		
+		if (challengeNumber == 1) {
+			value = attributes.get(0).getAttributeValue();
+		} else if (challengeNumber == 2) {
+			value = attributes.get(1).getAttributeValue();
+		} else if (challengeNumber == 3) {
+			value = attributes.get(2).getAttributeValue();
+		} else if (challengeNumber == 4) {
+			value = attributes.get(3).getAttributeValue();
+		} else if (challengeNumber == 5) {
+			value = attributes.get(4).getAttributeValue();
+		}
+		
+		if (value == 0) {
+			value = 1;
+		} else {
+			value = value/(0.2);
+		}
+
+		currentPoints += value;
+		
+		return "value = " +value+" currentPoints = "+currentPoints;
+	}
+
+	public double getCurrentPoints() {
+		return currentPoints;
 	}
 }

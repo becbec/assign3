@@ -26,8 +26,6 @@ public class GameClient {
 	public String name;
 	public List<Attribute> attrs;
 	public List<Look> looks;
-	List<PlayerCharacter> girls;
-	
 	
 	public GameClient() {
 		playerID = "";
@@ -37,8 +35,6 @@ public class GameClient {
 		name = "";
 		attrs = new ArrayList<Attribute>();
 		looks = new ArrayList<Look>();
-		girls = new ArrayList<PlayerCharacter>();
-		girls = setGirls(girls);
 	}
 	
 	public static void main(String[] args) throws JSONException, InterruptedException {
@@ -229,52 +225,4 @@ public class GameClient {
 			return null;
 		}
 	}
-	
-	private static List<PlayerCharacter> setGirls(List<PlayerCharacter> girls) { //TODO: This should be on the server, not the client, 
-		//otherwise the girls wont be the same for both clients! Robin says fuck off, but not before fixing stuff
-		Random generator = new Random();
-		List<Attribute> aList = new ArrayList<Attribute>();
-		List<Look> aLook = new ArrayList<Look>();
-		int n;
-		List<Integer> seen = new ArrayList<Integer>();
-		
-		for (int i = 0; i < 2; i++) {
-			String name = "girl"+i;
-			
-			// Girls choose n things they don't like. and if a player completes a challenge then you take 1/5 their score
-			// ie less positive points
-			
-			for (int j = 0; j < 2; j++) {
-				n = generator.nextInt(Attributes.values().length);
-				while (seen.contains(n)){
-					n = generator.nextInt(Attributes.values().length);
-				}
-				seen.add(n);
-				aList.add(new Attribute(Attributes.values()[n].toString(), 5));
-			}
-			
-			n = generator.nextInt(HairColour.values().length);
-			aLook.add(new Look(HairColour.values()[n].toString(), "1"));
-			n = generator.nextInt(EyeColour.values().length);
-			aLook.add(new Look(EyeColour.values()[n].toString(), "1"));
-			n = generator.nextInt(BodyType.values().length);
-			aLook.add(new Look(BodyType.values()[n].toString(), "1"));
-			
-			girls.add(new PlayerCharacter(name,aList,aLook));
-		}
-		
-		// overwrite different looks
-		for (int i = 0; i < 2; i++) {
-			String name = "girl"+i;
-			aList.add(new Attribute(Attributes.CHARM.toString(), 5));
-			aLook.add(new Look(HairColour.BLACK.toString(), "1"));
-			aLook.add(new Look(EyeColour.BLUE.toString(), "1"));
-			aLook.add(new Look(BodyType.ATHLETIC.toString(), "1"));
-			
-			girls.add(new PlayerCharacter(name, aList, aLook));
-		}
-		
-		return girls;
-	}
-
 }
