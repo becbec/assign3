@@ -1,5 +1,6 @@
 package game;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -45,6 +46,7 @@ public class GameServer implements Runnable {
 		listenServer = new MessageServer();
 		this.m_msgServerThread = new Thread(listenServer);
 		m_msgServerThread.start();	
+		characters = new ArrayList<PlayerCharacter>();
 	}
 
 	 public static void main(String[] args) {
@@ -93,18 +95,51 @@ public class GameServer implements Runnable {
 				JSONObject j;
 				try {
 					j = new JSONObject(msg);
-					System.out.println("failed here?"+msg);
-					if (j.get("PlayerID").equals("1")) {
-						String m = playGame(characters.get(0), null);
-						client1OutgoingMsgs.add(m);
-					} else if (j.get("PlayerID").equals("2")) {
-						String m = playGame(characters.get(1), null);
-						client2OutgoingMsgs.add(m);
+					if (j.has("Character")) { //Storing the characters players have created
+						String pid = j.getString("PlayerID");
+						JSONObject jo = j.getJSONObject("Character");
+						String name = jo.getString("Name");
+						List<Attribute> la = new ArrayList<Attribute>();
+						List<Look> ll = new ArrayList<Look>();
+						for (Attributes a : Attributes.values()) {
+							la.add( new Attribute(a.toString(), jo.getInt(a.toString())));
+						}
+						for (HairColour hc : HairColour.values()) {
+							ll.add(new Look("HAIR", jo.getString("HAIR")));
+						}
+						for (EyeColour ec : EyeColour.values()) {
+							ll.add(new Look("EYES", jo.getString("EYES")));
+						}
+						for (HairColour hc : HairColour.values()) {
+							ll.add(new Look("HAIR", jo.getString("HAIR")));
+						}
+						for (BodyType bt : BodyType.values()) {
+							ll.add(new Look("BODY", jo.getString("BODY")));
+						}
+						
+						PlayerCharacter p = new PlayerCharacter(name, la, ll);
+						characters.add(Integer.parseInt(pid)-1, p);
+						
+						if (characters.size() == 2) {
+							client1OutgoingMsgs.add(playGame(characters.get(0), null));
+							client2OutgoingMsgs.add(playGame(characters.get(1), null));
+						}
+						
+					} else {
+
+						System.out.println("failed here?"+msg);
+						if (j.get("PlayerID").equals("1")) {
+							String m = playGame(characters.get(0), null);
+							client1OutgoingMsgs.add(m); //TODO: Convert to JSON first
+						} else if (j.get("PlayerID").equals("2")) {
+							String m = playGame(characters.get(1), null);
+							client2OutgoingMsgs.add(m); //TODO: Convert to JSON first
+						}
 					}
 				} catch (JSONException e) {
 					e.printStackTrace();
 				}
-				}
+			}
 				
 				GameServer.m_client1GameEndTime = Calendar.getInstance();
 				GameServer.m_client1GameEndTime.add(Calendar.SECOND, 30);
