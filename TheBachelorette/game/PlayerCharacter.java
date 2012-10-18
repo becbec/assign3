@@ -12,6 +12,7 @@ public class PlayerCharacter {
 	private int stage;
 	private Challenge ch;
 	private int challengeNumber;
+	private int numberOfGirls;
 	
 	public PlayerCharacter(String name, List<Attribute> attributes, List<Look> looks){
 		this.name = name;
@@ -23,6 +24,7 @@ public class PlayerCharacter {
 		}
 		stage = 0;
 		challengeNumber = -1;
+		numberOfGirls = 0;
 	}
 
 	public List<Attribute> getAttributes() {
@@ -107,5 +109,13 @@ public class PlayerCharacter {
 	
 	public boolean isAnswerCorrect(String answer) {
 		return ch.checkAnswer(answer);
+	}
+	
+	public int getNumberOfGirls() {
+		return numberOfGirls;
+	}
+	
+	public void updateNumberOfGirls() {
+		numberOfGirls++;
 	}
 }

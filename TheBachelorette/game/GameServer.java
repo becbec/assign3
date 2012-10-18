@@ -160,14 +160,16 @@ public class GameServer implements Runnable {
 			p.updateStage(3);
 		} else if (stage == 3) {
 			if (p.isAnswerCorrect(msg)) {
-				message = "that is the correct answer";
+				message = "Congratulations, that is the correct answer! You have got that girls number";
+				p.updateStage(4);
 			} else if (!p.isAnswerCorrect(msg)) {
 				message = "That is not the correct answer.\n Would you like to: 1. Try again at using this challenge to impress a girl, or\n" +
 						"2. Go back impress a girl using something else. Type a number to select your choice.";
 				p.updateStage(5);
 			}
  		} else if (stage == 4) {
- 			
+ 			p.updateNumberOfGirls();
+ 			p.updateStage(0);
  		} else if (stage == 5) {
  			if (Integer.parseInt(msg) == 1) {
  				message = p.initChallenege(p.getChallengeNumber());
