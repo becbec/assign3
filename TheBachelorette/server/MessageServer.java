@@ -3,6 +3,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
@@ -20,7 +21,7 @@ public class MessageServer implements Runnable {
 	public Queue<String> m_incomingMsgQueue;
 	public Queue<String> m_client1OutgoingQueue;
 	public Queue<String> m_client2OutgoingQueue;
-	private int m_player = 1;
+	private int m_player = 0;
 	private ServerSocket m_socket;
 	public List<Socket> connections;
 	public HashMap<String, Socket> m_connections;
@@ -101,11 +102,12 @@ final class HandleRequest implements Runnable
 			// TODO:
 			BufferedReader br = new BufferedReader(new InputStreamReader(
                     this.m_socket.getInputStream()));
+			PrintWriter out = new PrintWriter(m_socket.getOutputStream(),true);
 			
 			if (m_player == 1)
-				this.m_msgServer.m_client1OutgoingQueue.add("{\"playerID\" : \"1\" }");
+				this.m_msgServer.m_client1OutgoingQueue.add("{\"PlayerID\" : \"1\" }");
 			else if (m_player == 2)
-				this.m_msgServer.m_client2OutgoingQueue.add("{\"playerID\" : \"2\" }");
+				this.m_msgServer.m_client2OutgoingQueue.add("{\"PlayerID\" : \"2\" }");
 
 			while (true)
 			{
@@ -116,10 +118,12 @@ final class HandleRequest implements Runnable
 				if (m_player == 1 && !this.m_msgServer.m_client1OutgoingQueue.isEmpty()) 
 				{
 					// TODO: this is a stub, don't just write out a NULL
-					this.m_socket.getOutputStream().write(null);
+					
+					out.println(this.m_msgServer.m_client1OutgoingQueue.remove());
 				} else if (m_player == 2 && !this.m_msgServer.m_client2OutgoingQueue.isEmpty())
 				{
 					// this.m_socket.getOutputStream().write(this.m_msgServer.m_client2Queue.remove());
+					out.println(this.m_msgServer.m_client2OutgoingQueue.remove());
 				}
 			}
 		}

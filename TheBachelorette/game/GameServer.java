@@ -75,22 +75,34 @@ public class GameServer implements Runnable {
 			
 			if (!listenServer.m_incomingMsgQueue.isEmpty()) {
 				// parse incoming message queue
-				String msg = listenServer.m_incomingMsgQueue.remove();
-				if (!msg.equals("{\"blah\" : \"blah\"}")) {
+				String msg = listenServer.m_incomingMsgQueue.remove();				
+//				try {
+//					JSONObject j = new JSONObject(msg);
+//					if (j.has("Character")) {
+//						
+//					}
+//				} catch (JSONException e) {
+//				}
+//				
+				if (!msg.equals("{\"Blah\" : \"Blah\"}")) {
 					System.out.println(msg);
 				}
+				
+				
 				// check client1 games
 				// start game
 				GameServer.m_client1GameEndTime = Calendar.getInstance();
 				GameServer.m_client1GameEndTime.add(Calendar.SECOND, 30);
 			}
 			// check game ended?
+			/*
 			if (Calendar.getInstance().after(GameServer.m_client1GameEndTime))
 			{
 				//update games states, determine if player won/lost, how many points they got etc
 				client1OutgoingMsgs.add("You won!");
 				client2OutgoingMsgs.add("Player 1 won the girl!");
 			}
+			*/
 			
 			// check client2 game
 			

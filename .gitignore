@@ -1,3 +1,6 @@
 .metadata/
 .settings/
 *.class
+
+TheBachelorette/bin/org/json/*.class
+*.class
