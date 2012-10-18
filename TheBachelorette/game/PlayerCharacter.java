@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerCharacter {
+	private String playerID; 
 	private String name;
 	private List<Attribute> attributes;
 	private List<Look> looks;

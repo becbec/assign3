@@ -41,7 +41,7 @@ public class ClientServerConnection implements Runnable {
 			PrintWriter out = new PrintWriter(m_socket.getOutputStream(), true);
 			
 			while (true) {
-				m_outgoingMsgQueue.add("{\"blah\" : \"blah\"}");
+				m_outgoingMsgQueue.add("{\"Blah\" : \"Blah\"}");
 				//send all outgoing messages
 				while (!m_outgoingMsgQueue.isEmpty())  {
 					out.println(m_outgoingMsgQueue.remove());
@@ -51,6 +51,7 @@ public class ClientServerConnection implements Runnable {
 				while (inFromServer.ready()) {
 					m_incomingMsgQueue.add(inFromServer.readLine());
 				}
+				Thread.sleep(1);
 				
 			}
 		} catch (Exception e) {

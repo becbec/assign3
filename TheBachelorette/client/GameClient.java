@@ -1,5 +1,13 @@
 package client;
 
+import game.Attribute;
+import game.GameServer.Attributes;
+import game.GameServer.BodyType;
+import game.GameServer.EyeColour;
+import game.GameServer.HairColour;
+import game.Look;
+import game.PlayerCharacter;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,19 +15,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import server.MessageServer;
-
-import game.*;
-import game.GameServer.Attributes;
-import game.GameServer.HairColour;
-import game.GameServer.EyeColour;
-import game.GameServer.BodyType;
+import org.json.JSONException;
 
 public class GameClient {
-	public int playerID;
+	public String playerID;
 	public BufferedReader lineOfText;
 	public Integer points;
 	public int remainingPoints;
@@ -30,7 +30,7 @@ public class GameClient {
 	
 	
 	public GameClient() {
-		playerID = 0;
+		playerID = "";
 		lineOfText = new BufferedReader(new InputStreamReader(System.in));
 		points = 0;
 		remainingPoints = 20;
@@ -41,18 +41,22 @@ public class GameClient {
 		girls = setGirls(girls);
 	}
 	
-	public static void main(String[] args) throws JSONException {
+	public static void main(String[] args) throws JSONException, InterruptedException {
 		GameClient gc = new GameClient();
 
 		
 	    try { //TODO: error checking for server/port
 	    	System.out.println("Please enter the host server");
-			String server = gc.lineOfText.readLine();
+			//String server = gc.lineOfText.readLine();
+	    	String server = "localhost"; //TODO: Remove
 			System.out.println("Please enter the host port");
-			String temp = gc.lineOfText.readLine();
-			int port = Integer.parseInt(temp);
+			String temp = "";
+			//String temp = gc.lineOfText.readLine();
+			//int port = Integer.parseInt(temp);
+			int port = 1338;
 	    	System.out.println("Please enter your name");
-			gc.name = gc.lineOfText.readLine();
+			//gc.name = gc.lineOfText.readLine();
+	    	gc.name = "Ruth";
 			System.out.println("You have " + gc.remainingPoints + " points to assign to the following attributes: ");
 			System.out.println("INTELLIGENCE, LOOKS, CHARM, HONESTY, STRENGTH, KINDNESS, HUMOUR, ");
 			System.out.println("ENTHUSIASM, ADAPTABILITY, RELIABILITY, and GENEROSITY");
@@ -102,7 +106,8 @@ public class GameClient {
 						System.out.print(hc + " | ");
 					}
 					System.out.println();
-					selection = gc.lineOfText.readLine().toUpperCase();
+					//selection = gc.lineOfText.readLine().toUpperCase();
+					selection = "BROWN";
 					try {
 						l = new Look("HAIR", HairColour.valueOf(selection).toString());
 						selected = 1;
@@ -123,7 +128,8 @@ public class GameClient {
 						System.out.print(ec + " | ");
 					}
 					System.out.println();
-					selection = gc.lineOfText.readLine().toUpperCase();
+					//selection = gc.lineOfText.readLine().toUpperCase();
+					selection = "BROWN";
 					try {
 						l = new Look("EYES", EyeColour.valueOf(selection).toString());
 						selected = 1;
@@ -143,8 +149,8 @@ public class GameClient {
 						System.out.print(bt + " | ");
 					}
 					System.out.println();
-					selection = gc.lineOfText.readLine().toUpperCase();
-					
+					//selection = gc.lineOfText.readLine().toUpperCase();
+					selection = "AVERAGE";
 					try {
 						l = new Look("BODY", BodyType.valueOf(selection).toString());
 						selected = 1;
@@ -166,10 +172,12 @@ public class GameClient {
 		Thread t = new Thread(csConnection);
 		t.start();
 		//spawns thread to read incoming messages + print them
-		ProcessIncomingMessages pim = new ProcessIncomingMessages(csConnection);
+		ProcessIncomingMessages pim = new ProcessIncomingMessages(csConnection, gc);
 		t = new Thread(pim);
 		t.start();
-
+		
+		Thread.sleep(2000);
+		System.out.println("player id" + gc.playerID);
 		JSONObject JObj = createJSONCharacterMsg(character, gc);
 		csConnection.m_outgoingMsgQueue.add(JObj.toString());
 		
@@ -178,6 +186,7 @@ public class GameClient {
 //		jt.put("ruth", "mierowsky");
 //		if (jt.has("ruth"))
 //			System.out.println(jt.getString("ruth").toString());
+		
 		
 
 		//main thread blocks and waits for user input

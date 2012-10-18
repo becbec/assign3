@@ -75,8 +75,16 @@ public class GameServer implements Runnable {
 			
 			if (!listenServer.m_incomingMsgQueue.isEmpty()) {
 				// parse incoming message queue
-				String msg = listenServer.m_incomingMsgQueue.remove();
-				if (!msg.equals("{\"blah\" : \"blah\"}")) {
+				String msg = listenServer.m_incomingMsgQueue.remove();				
+//				try {
+//					JSONObject j = new JSONObject(msg);
+//					if (j.has("Character")) {
+//						
+//					}
+//				} catch (JSONException e) {
+//				}
+//				
+				if (!msg.equals("{\"Blah\" : \"Blah\"}")) {
 					System.out.println(msg);
 				
 				// check client1 games
@@ -102,12 +110,14 @@ public class GameServer implements Runnable {
 				GameServer.m_client1GameEndTime.add(Calendar.SECOND, 30);
 			}
 			// check game ended?
+			/*
 			if (Calendar.getInstance().after(GameServer.m_client1GameEndTime))
 			{
 				//update games states, determine if player won/lost, how many points they got etc
 				client1OutgoingMsgs.add("You won!");
 				client2OutgoingMsgs.add("Player 1 won the girl!");
 			}
+			*/
 			
 			// check client2 game
 			
@@ -160,7 +170,7 @@ public class GameServer implements Runnable {
  			
  		} else if (stage == 5) {
  			if (Integer.parseInt(msg) == 1) {
- 				message = p.initChallenege(Integer.parseInt(p.getChallengeNumber()));
+ 				message = p.initChallenege(p.getChallengeNumber());
  				p.updateStage(3);
  			} else if (Integer.parseInt(msg) == 2) {
  				p.setGirlSeen(Integer.parseInt(msg));
