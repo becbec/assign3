@@ -6,67 +6,85 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import server.MessageServer;
 
 import game.*;
-import game.Main.Attributes;
-import game.Main.HairColour;
-import game.Main.EyeColour;
-import game.Main.BodyType;
+import game.GameServer.Attributes;
+import game.GameServer.HairColour;
+import game.GameServer.EyeColour;
+import game.GameServer.BodyType;
 
 
-public class Main {
+public class GameClient {
+	public int playerID;
+	public BufferedReader lineOfText;
+	public Integer points;
+	public int remainingPoints;
+	public String name;
+	public List<Attribute> attrs;
+	public List<Look> looks;
 	
-	public static void main(String[] args) {
-		BufferedReader lineOfText = new BufferedReader(new InputStreamReader(System.in));
-		Integer points = 0;
-		int remainingPoints = 20;
-		String name = "";
-		List<Attribute> attrs = new ArrayList<Attribute>();
-		List<Look> looks = new ArrayList<Look>();
+	
+	public GameClient() {
+		playerID = 0;
+		lineOfText = new BufferedReader(new InputStreamReader(System.in));
+		points = 0;
+		remainingPoints = 20;
+		name = "";
+		attrs = new ArrayList<Attribute>();
+		looks = new ArrayList<Look>();
+	}
+	
+	public static void main(String[] args) throws JSONException {
+		GameClient gc = new GameClient();
+
 		
 	    try { //TODO: error checking for server/port
 	    	System.out.println("Please enter the host server");
-			String server = lineOfText.readLine();
+			String server = gc.lineOfText.readLine();
 			System.out.println("Please enter the host port");
-			String temp = lineOfText.readLine();
+			String temp = gc.lineOfText.readLine();
 			int port = Integer.parseInt(temp);
-	    	
+	    
+			
 	    	System.out.println("Please enter your name");
-			name = lineOfText.readLine();
-			System.out.println("You have " + remainingPoints + " points to assign to the following attributes: ");
+			gc.name = gc.lineOfText.readLine();
+			System.out.println("You have " + gc.remainingPoints + " points to assign to the following attributes: ");
 			System.out.println("INTELLIGENCE, LOOKS, CHARM, HONESTY, STRENGTH, KINDNESS, HUMOUR, ");
 			System.out.println("ENTHUSIASM, ADAPTABILITY, RELIABILITY, and GENEROSITY");
 
 			
 			
 			for (Attributes attr : Attributes.values()) { 
-				if (remainingPoints ==0 ) {
+				if (gc.remainingPoints ==0 ) {
 					Attribute newAttr = new Attribute(attr.toString(), 0);
-					attrs.add(newAttr);
+					gc.attrs.add(newAttr);
 				} else {
 				
 					System.out.println();
-					System.out.println("You have " + remainingPoints + " points remaining");
+					System.out.println("You have " + gc.remainingPoints + " points remaining");
 					System.out.println("How many points would you like to assign to " + attr);
-					temp = lineOfText.readLine();
-					points = tryParse(temp);
-					while (points == null) {
+					temp = gc.lineOfText.readLine();
+					gc.points = tryParse(temp);
+					while (gc.points == null) {
 						System.out.println("Please make sure to enter numbers only");
 						System.out.println("How many points would you like to assign to " + attr);
-						temp = lineOfText.readLine();
-						points = Integer.parseInt(temp);
+						temp = gc.lineOfText.readLine();
+						gc.points = Integer.parseInt(temp);
 					}
 				
-					if (points <= remainingPoints) {
-						Attribute newAttr = new Attribute(attr.toString(), points);
-						attrs.add(newAttr);
-						remainingPoints -= points;
+					if (gc.points <= gc.remainingPoints) {
+						Attribute newAttr = new Attribute(attr.toString(), gc.points);
+						gc.attrs.add(newAttr);
+						gc.remainingPoints -= gc.points;
 					} else {
-						Attribute newAttr = new Attribute(attr.toString(), remainingPoints);
-						attrs.add(newAttr);
-						System.out.println("You only had " + remainingPoints + " points remaining. These points were assigned to " + attr.toString());
-						remainingPoints= 0;
+						Attribute newAttr = new Attribute(attr.toString(), gc.remainingPoints);
+						gc.attrs.add(newAttr);
+						System.out.println("You only had " + gc.remainingPoints + " points remaining. These points were assigned to " + attr.toString());
+						gc.remainingPoints= 0;
 					}
 				}
 				
@@ -82,7 +100,7 @@ public class Main {
 						System.out.print(hc + " | ");
 					}
 					System.out.println();
-					selection = lineOfText.readLine().toUpperCase();
+					selection = gc.lineOfText.readLine().toUpperCase();
 					try {
 						l = new Look("HAIR", HairColour.valueOf(selection).toString());
 						selected = 1;
@@ -91,7 +109,7 @@ public class Main {
 					}
 				}	
 				
-				looks.add(l);
+				gc.looks.add(l);
 				selected = 0;
 				
 				while (selected == 0) {
@@ -103,7 +121,7 @@ public class Main {
 						System.out.print(ec + " | ");
 					}
 					System.out.println();
-					selection = lineOfText.readLine().toUpperCase();
+					selection = gc.lineOfText.readLine().toUpperCase();
 					try {
 						l = new Look("EYES", EyeColour.valueOf(selection).toString());
 						selected = 1;
@@ -111,7 +129,7 @@ public class Main {
 						//do nothing
 					}
 				}
-				looks.add(l);
+				gc.looks.add(l);
 				selected = 0;
 				
 				while (selected == 0) {
@@ -123,7 +141,7 @@ public class Main {
 						System.out.print(bt + " | ");
 					}
 					System.out.println();
-					selection = lineOfText.readLine().toUpperCase();
+					selection = gc.lineOfText.readLine().toUpperCase();
 					
 					try {
 						l = new Look("BODY", BodyType.valueOf(selection).toString());
@@ -133,13 +151,13 @@ public class Main {
 					}
 				}
 				
-				looks.add(l);
+				gc.looks.add(l);
 				
 			
-		PlayerCharacter character = new PlayerCharacter(name,attrs,looks);
-		System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n");
-		System.out.println("Your chosen character: ");
-		character.printCharacter();
+		PlayerCharacter character = new PlayerCharacter(gc.name,gc.attrs,gc.looks);
+		//System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n");
+		//System.out.println("Your chosen character: ");
+		//character.printCharacter();
 		
 		//spawns thread to connect to Server
 		ClientServerConnection csConnection = new ClientServerConnection(server, port);
@@ -149,10 +167,21 @@ public class Main {
 		ProcessIncomingMessages pim = new ProcessIncomingMessages(csConnection);
 		t = new Thread(pim);
 		t.start();
+
+		JSONObject JObj = createJSONCharacterMsg(character, gc);
+		csConnection.m_outgoingMsgQueue.add(JObj.toString());
+		
+		//System.out.println(JObj.toString());
+		
+//		jt.put("ruth", "mierowsky");
+//		if (jt.has("ruth"))
+//			System.out.println(jt.getString("ruth").toString());
+		
+
 		//main thread blocks and waits for user input
 		String input;
 		while (true) {
-			 input = lineOfText.readLine();
+			 input = gc.lineOfText.readLine();
 			 //TODO:process input - make JSON message
 			 csConnection.m_outgoingMsgQueue.add(input);
 			 
@@ -163,6 +192,21 @@ public class Main {
 		}
 	}
 	
+	private static JSONObject createJSONCharacterMsg(PlayerCharacter character, GameClient gc) throws JSONException {
+		JSONObject jt = new JSONObject();
+		jt.put("PlayerID", gc.playerID );
+		
+		JSONObject J_character = new JSONObject();
+		for (Attribute a : character.getAttributes()) {
+			J_character.put(a.getAttributeType(), a.getAttributeValue());
+		}
+		for (Look l : character.getLooks()) {
+			J_character.put(l.getLookType(), l.getLookValue());	
+		}
+		jt.put("Character", J_character);
+		return jt;
+	}
+
 	public static Integer tryParse(String text) {
 		  try {
 		    return new Integer(text);

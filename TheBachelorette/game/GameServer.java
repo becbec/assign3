@@ -4,13 +4,15 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Timer;
 
 import org.json.*;
 
 import server.MessageServer;
 
-public class Main {
+public class GameServer implements Runnable {
+	private Thread m_msgServerThread;
 	private static Calendar m_client1GameEndTime, m_client2GameTime;
 	
 	public enum Attributes { //Add more as we add more to game
@@ -35,23 +37,37 @@ public class Main {
 	}
 	
 	public List<Character> characters;
+	MessageServer listenServer;
+	List<String> client1OutgoingMsgs;
+	List<String> client2OutgoingMsgs;
+	
+	public GameServer() {
+		listenServer = new MessageServer();
+		this.m_msgServerThread = new Thread(listenServer);
+		m_msgServerThread.start();	
+	}
 
-	// TODO: PUT THIS INTO A NON-STATIC CLASS
-	public static void main(String[] args) throws JSONException {
-//		System.out.println("hi");
-//		JSONObject jt = new JSONObject("{\"blah\" : \"blah\"}");
-//	
-//		jt.put("ruth", "mierowsky");
-//		if (jt.has("ruth"))
-//			System.out.println(jt.getString("ruth").toString());
-//		
-		MessageServer listenServer = new MessageServer();
-		Thread t = new Thread(listenServer);
-		t.start();
-		
-		List<String> client1OutgoingMsgs;
-		List<String> client2OutgoingMsgs;
-		
+	 public static void main(String[] args) {
+         GameServer gs = new GameServer();
+         Thread t = new Thread(gs);
+         t.start();
+
+         Scanner input = new Scanner(System.in);
+
+         while (true) {
+                 String inputStr = input.next();
+                 System.out.println(inputStr);
+                 if (inputStr.equals("quit")) {
+                         gs.stopListening();
+                         input.close();
+                         t.interrupt();
+                         break;
+                 }
+         }
+ }
+
+	
+	public void run() {
 		while (true)
 		{
 			client1OutgoingMsgs = new LinkedList<String>();
@@ -60,14 +76,16 @@ public class Main {
 			if (!listenServer.m_incomingMsgQueue.isEmpty()) {
 				// parse incoming message queue
 				String msg = listenServer.m_incomingMsgQueue.remove();
-			
+				if (!msg.equals("{\"blah\" : \"blah\"}")) {
+					System.out.println(msg);
+				}
 				// check client1 games
 				// start game
-				Main.m_client1GameEndTime = Calendar.getInstance();
-				Main.m_client1GameEndTime.add(Calendar.SECOND, 30);
+				GameServer.m_client1GameEndTime = Calendar.getInstance();
+				GameServer.m_client1GameEndTime.add(Calendar.SECOND, 30);
 			}
 			// check game ended?
-			if (Calendar.getInstance().after(Main.m_client1GameEndTime))
+			if (Calendar.getInstance().after(GameServer.m_client1GameEndTime))
 			{
 				//update games states, determine if player won/lost, how many points they got etc
 				client1OutgoingMsgs.add("You won!");
@@ -77,10 +95,10 @@ public class Main {
 			// check client2 game
 			
 			// update client1
-			listenServer.m_client1Queue.addAll(client1OutgoingMsgs);
+			listenServer.m_client1OutgoingQueue.addAll(client1OutgoingMsgs);
 			
 			// update client2
-			listenServer.m_client2Queue.addAll(client2OutgoingMsgs);
+			listenServer.m_client2OutgoingQueue.addAll(client2OutgoingMsgs);
 			
 			try {
 				Thread.sleep(1);
@@ -89,5 +107,8 @@ public class Main {
 			}
 		}
 	}
-
+	
+	public void stopListening() { //need to figure out when to stop listening
+		m_msgServerThread.interrupt();
+	}
 }
