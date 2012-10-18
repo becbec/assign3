@@ -121,18 +121,18 @@ public class GameServer implements Runnable {
 						characters.add(Integer.parseInt(pid)-1, p);
 						
 						if (characters.size() == 2) {
-							client1OutgoingMsgs.add(playGame(characters.get(0), null));
-							client2OutgoingMsgs.add(playGame(characters.get(1), null));
+							client1OutgoingMsgs.add(playGame(characters.get(0), null).toString());
+							client2OutgoingMsgs.add(playGame(characters.get(1), null).toString());
 						}
 						
 					} else {
 
 						System.out.println("failed here?"+msg);
 						if (j.get("PlayerID").equals("1")) {
-							String m = playGame(characters.get(0), null);
+							 String m = playGame(characters.get(0), null).toString();
 							client1OutgoingMsgs.add(m); //TODO: Convert to JSON first
 						} else if (j.get("PlayerID").equals("2")) {
-							String m = playGame(characters.get(1), null);
+							String m = playGame(characters.get(1), null).toString();
 							client2OutgoingMsgs.add(m); //TODO: Convert to JSON first
 						}
 					}
@@ -174,12 +174,14 @@ public class GameServer implements Runnable {
 		m_msgServerThread.interrupt();
 	}
 	
-	private String playGame(PlayerCharacter p, String msg) {
+	private JSONObject playGame(PlayerCharacter p, String msg) throws JSONException {
 		int stage = p.stageNumber();
+		JSONObject j = new JSONObject();
 		String message = "";
 		if (stage == 0) {
 			message = "Which girl would you like to try and get a number from?\n" +
 					"Girl1, Girl2, Girl3, Girl4, Girl5, Girl6\nType a number to select a girl\n";
+			j.put("Message", message);
 			p.updateStage(1);
 		} else if (stage == 1 && p.isGirlSeen(Integer.parseInt(msg))) {
 			message = "You have already got that girl's number!\nChoose another girl you would like to try and get a number from.\n" +
@@ -218,7 +220,7 @@ public class GameServer implements Runnable {
  			}
  		}
 		
-		return message;
+		return j;
 	}
 	
 }
