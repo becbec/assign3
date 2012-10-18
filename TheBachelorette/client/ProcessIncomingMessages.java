@@ -27,7 +27,7 @@ public class ProcessIncomingMessages implements Runnable {
 						System.out.println(j.get("Message"));
 					} else if (j.has("PlayerID")) {
 						System.out.println("playerId geting set " + j.getString("PlayerID"));
-						gc.playerID = j.getString("PlayerID"); //Check that this actually sets the playerID
+						gc.playerID = j.getString("PlayerID"); 
 					}
 				} catch (JSONException e) {
 					// TODO Auto-generated catch block

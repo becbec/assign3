@@ -193,8 +193,10 @@ public class GameClient {
 		String input;
 		while (true) {
 			 input = gc.lineOfText.readLine();
-			 //TODO:process input - make JSON message
-			 csConnection.m_outgoingMsgQueue.add(input);
+			 JSONObject j = new JSONObject();
+			 j.put("PlayerID", gc.playerID);
+			 j.put("Message", input);
+			 csConnection.m_outgoingMsgQueue.add(j.toString());
 			 
 		}
 
@@ -228,7 +230,8 @@ public class GameClient {
 		}
 	}
 	
-	private static List<PlayerCharacter> setGirls(List<PlayerCharacter> girls) {
+	private static List<PlayerCharacter> setGirls(List<PlayerCharacter> girls) { //TODO: This should be on the server, not the client, 
+		//otherwise the girls wont be the same for both clients! Robin says fuck off, but not before fixing stuff
 		Random generator = new Random();
 		List<Attribute> aList = new ArrayList<Attribute>();
 		List<Look> aLook = new ArrayList<Look>();

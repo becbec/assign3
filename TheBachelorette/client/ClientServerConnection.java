@@ -51,7 +51,7 @@ public class ClientServerConnection implements Runnable {
 				while (inFromServer.ready()) {
 					m_incomingMsgQueue.add(inFromServer.readLine());
 				}
-				Thread.sleep(1);
+				Thread.sleep(100);
 				
 			}
 		} catch (Exception e) {
@@ -65,55 +65,6 @@ public class ClientServerConnection implements Runnable {
 }
 
 
-/*
- Message Types (server to client)
- 
- TEXT/FEEDBACK ETC.
- MessageType : text
- Message : Message Text
- 
- CHALLENGE.
- MessageType: challenge
- RoundType: round type eg. intelligence, charm etc
- Message: text
- 
- 
- CHALLENGE FEEDBACK.
- MessageType: ChallengeFeedback
- Correct: yes/no
- Girl: Did they get the number/ how close are they etc.
- 
- 
- 
- 
- Message Types (client to server)
- CHOOSING CHARACTER
-"ChoosingCharacter" :
-	Att1 : blah
-	...
-	
- 
- CHOOSING GIRL
-"ChoosingGirl" :
- 	Player: playernumber
- 	Girl: girlnumber
- 
-CHOOSING ROUND TYPE
-ChoosingRoundType
-	Player : playernumber
- 	RoundType : roundtype
- 
- 
- SUBMITTING ANSWER
-SubmittingAnswer
-	Player: playernumber
- 	Girl: Chosengirl //do we need this or will server know this
- 	server will store current points? otherwise current points
- 	Answer: answer
- 
-
- 
- */
 
 
 
