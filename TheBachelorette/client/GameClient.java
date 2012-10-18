@@ -193,8 +193,10 @@ public class GameClient {
 		String input;
 		while (true) {
 			 input = gc.lineOfText.readLine();
-			 //TODO:process input - make JSON message
-			 csConnection.m_outgoingMsgQueue.add(input);
+			 JSONObject j = new JSONObject();
+			 j.put("PlayerID", gc.playerID);
+			 j.put("Message", input);
+			 csConnection.m_outgoingMsgQueue.add(j.toString());
 			 
 		}
 
