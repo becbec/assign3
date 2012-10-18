@@ -1,5 +1,13 @@
 package client;
 
+import game.Attribute;
+import game.GameServer.Attributes;
+import game.GameServer.BodyType;
+import game.GameServer.EyeColour;
+import game.GameServer.HairColour;
+import game.Look;
+import game.PlayerCharacter;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -7,16 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import server.MessageServer;
-
-import game.*;
-import game.GameServer.Attributes;
-import game.GameServer.HairColour;
-import game.GameServer.EyeColour;
-import game.GameServer.BodyType;
+import org.json.JSONException;
 
 public class GameClient {
 	public String playerID;
