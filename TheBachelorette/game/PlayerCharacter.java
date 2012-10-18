@@ -8,6 +8,9 @@ public class PlayerCharacter {
 	private List<Attribute> attributes;
 	private List<Look> looks;
 	private int[] girlsSeen;
+	private int stage;
+	private Challenge ch;
+	private int challengeNumber;
 	
 	public PlayerCharacter(String name, List<Attribute> attributes, List<Look> looks){
 		this.name = name;
@@ -17,7 +20,8 @@ public class PlayerCharacter {
 		for (int i = 0; i < 2; i++) {
 			girlsSeen[i] = 0;
 		}
-		
+		stage = 0;
+		challengeNumber = -1;
 	}
 
 	public List<Attribute> getAttributes() {
@@ -63,5 +67,44 @@ public class PlayerCharacter {
 	
 	public void setGirlSeen(int i) {
 		girlsSeen[i] = 1;
+	}
+	
+	public int stageNumber() {
+		return stage;
+	}
+	
+	public void updateStage(int stage) {
+		this.stage = stage;
+	}
+	
+	public String initChallenege(int n) {
+		challengeNumber = n;
+		
+		if (n == 1) {
+			ch = new IntelligenceChallenge();
+			return ch.createChallenge();
+		} else if (n == 2) {
+			ch = new CharmChallenege();
+			return ch.createChallenge();
+		} else if (n == 3) {
+			ch = new HonestyChallenge();
+			return ch.createChallenge();
+		} else if (n == 4) {
+			ch = new HumourChallenege();
+			return ch.createChallenge();
+		} else if (n == 5) {
+			ch = new GenerosityChallenge();
+			return ch.createChallenge();
+		}
+		
+		return null;
+	}
+	
+	public int getChallengeNumber() {
+		return challengeNumber;
+	}
+	
+	public boolean isAnswerCorrect(String answer) {
+		return ch.checkAnswer(answer);
 	}
 }
