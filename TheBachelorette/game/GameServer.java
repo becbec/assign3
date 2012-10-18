@@ -202,36 +202,46 @@ public class GameServer implements Runnable {
 		} else if (stage == 1 && p.isGirlSeen(Integer.parseInt(msg))) {
 			message = "You have already got that girl's number!\nChoose another girl you would like to try and get a number from.\n" +
 			"Girl1, Girl2, Girl3, Girl4, Girl5, Girl6\nType a number to select a girl\n";
+			j.put("Message", message);
 		} else if (stage == 1 && !p.isGirlSeen(Integer.parseInt(msg))) {
 			p.setGirlSeen(Integer.parseInt(msg));
 			message = "What would you like to use to impress a girl and get her number?\n" +
 					"1. Show your intelligence    2. Use a cheesy pick up line    3. Reveal the truth    4. Tell a joke" +
 					"    5. Buy her a drink\nType a number to select what to use\n";
+			j.put("Message", message);
 			p.updateStage(2);
 		} else if (stage == 2) {
 			message = p.initChallenege(Integer.parseInt(msg));
+			j.put("Message", message);
 			p.updateStage(3);
 		} else if (stage == 3) {
 			if (p.isAnswerCorrect(msg)) {
 				message = "Congratulations, that is the correct answer! You have got that girls number";
+				j.put("Message", message);
 				p.updateStage(4);
 			} else if (!p.isAnswerCorrect(msg)) {
 				message = "That is not the correct answer.\n Would you like to: 1. Try again at using this challenge to impress a girl, or\n" +
 						"2. Go back impress a girl using something else. Type a number to select your choice.";
+				j.put("Message", message);
 				p.updateStage(5);
 			}
  		} else if (stage == 4) {
  			p.updateNumberOfGirls();
- 			p.updateStage(0);
+ 			message = "Which girl would you like to try and get another number from?\n" +
+			"Girl1, Girl2, Girl3, Girl4, Girl5, Girl6\nType a number to select a girl\n";
+ 			j.put("Message", message);
+ 			p.updateStage(1);
  		} else if (stage == 5) {
  			if (Integer.parseInt(msg) == 1) {
  				message = p.initChallenege(p.getChallengeNumber());
+ 				j.put("Message", message);
  				p.updateStage(3);
  			} else if (Integer.parseInt(msg) == 2) {
  				p.setGirlSeen(Integer.parseInt(msg));
  				message = "What would you like to use to impress a girl and get her number?\n" +
 				"1. Show your intelligence    2. Use a cheesy pick up line    3. Reveal the truth    4. Tell a joke" +
 				"    5. Buy her a drink\nType a number to select what to use\n";
+ 				j.put("Message", message);
  				p.updateStage(2);
  			}
  		}
