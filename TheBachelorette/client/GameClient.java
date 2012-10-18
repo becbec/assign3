@@ -233,12 +233,20 @@ public class GameClient {
 		List<Attribute> aList = new ArrayList<Attribute>();
 		List<Look> aLook = new ArrayList<Look>();
 		int n;
+		List<Integer> seen = new ArrayList<Integer>();
 		
 		for (int i = 0; i < 2; i++) {
 			String name = "girl"+i;
 			
+			// Girls choose n things they don't like. and if a player completes a challenge then you take 1/5 their score
+			// ie less positive points
+			
 			for (int j = 0; j < 2; j++) {
 				n = generator.nextInt(Attributes.values().length);
+				while (seen.contains(n)){
+					n = generator.nextInt(Attributes.values().length);
+				}
+				seen.add(n);
 				aList.add(new Attribute(Attributes.values()[n].toString(), 5));
 			}
 			
