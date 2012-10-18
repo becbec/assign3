@@ -208,6 +208,7 @@ public class GameClient {
 		jt.put("PlayerID", gc.playerID );
 		
 		JSONObject J_character = new JSONObject();
+		J_character.put("Name", gc.name);
 		for (Attribute a : character.getAttributes()) {
 			J_character.put(a.getAttributeType(), a.getAttributeValue());
 		}
