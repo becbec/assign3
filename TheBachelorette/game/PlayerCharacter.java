@@ -7,11 +7,17 @@ public class PlayerCharacter {
 	private String name;
 	private List<Attribute> attributes;
 	private List<Look> looks;
+	private int[] girlsSeen;
 	
 	public PlayerCharacter(String name, List<Attribute> attributes, List<Look> looks){
 		this.name = name;
 		this.attributes = new ArrayList<Attribute>(attributes);
 		this.looks = new ArrayList<Look>(looks);
+		girlsSeen = new int[2];
+		for (int i = 0; i < 2; i++) {
+			girlsSeen[i] = 0;
+		}
+		
 	}
 
 	public List<Attribute> getAttributes() {
@@ -47,4 +53,16 @@ public class PlayerCharacter {
 		}
 	}
 	
+	public boolean isGirlSeen(int i) {
+		
+		if (girlsSeen[i] == 0) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public void setGirlSeen(int i) {
+		girlsSeen[i] = 1;
+	}
 }

@@ -52,6 +52,7 @@ public class ClientServerConnection implements Runnable {
 			}
 		} catch (Exception e) {
 			System.err.println("broke in client server connection - run");
+			System.err.println(e.getMessage());
 		}
 	}
 	
