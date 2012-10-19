@@ -12,6 +12,7 @@ public class PlayerCharacter {
 	private int stage;
 	private Challenge ch;
 	private int challengeNumber;
+	private String challenge;
 	private int numberOfGirls;
 	private int currentGirl;
 	private double currentPoints;
@@ -90,17 +91,22 @@ public class PlayerCharacter {
 		
 		if (n == 1) {
 			currentGirl = 1;
+			challenge = "INTELLIGENCE";
 			ch = new IntelligenceChallenge();
 		} else if (n == 2) {
 			currentGirl = 2;
+			challenge = "CHARM";
 			ch = new CharmChallenege();
 		} else if (n == 3) {
 			currentGirl = 3;
+			challenge = "HONESTY";
 			ch = new HonestyChallenge();
 		} else if (n == 4) {
 			currentGirl = 4;
+			challenge = "HUMOUR";
 			ch = new HumourChallenege();
 		} else if (n == 5) {
+			challenge = "GENEROSITY";
 			currentGirl = 5;
 			ch = new GenerosityChallenge();
 		}
@@ -124,6 +130,9 @@ public class PlayerCharacter {
 		numberOfGirls++;
 	}
 
+	public int getCurrentGirl() {
+		return currentGirl;
+	}
 	
 	public boolean isChallengeComplete(int i) {
 		if (challenges[i] == 0) {
@@ -134,7 +143,7 @@ public class PlayerCharacter {
 		return false;
 	}
 	
-	public String updateCurrentPoints() {
+	public String updateCurrentPoints(PlayerCharacter girl) {
 		double value = 0;
 		
 		if (challengeNumber == 1) {
@@ -149,13 +158,22 @@ public class PlayerCharacter {
 			value = attributes.get(4).getAttributeValue();
 		}
 		
+		double tmpV = value;
+		
 		if (value == 0) {
 			value = 1;
 		} else {
 			value = value/(0.2);
 		}
 
-		currentPoints += value;
+		for (int i = 0; i < girl.attributes.size(); i++) {
+			if (girl.attributes.get(i).getAttributeType().equals(challenge)) {
+				tmpV*=0.5;
+			}
+		}
+
+		
+		currentPoints += value-tmpV;
 		challenges[challengeNumber] = 1;
 		
 		return "value = " +value+" currentPoints = "+currentPoints;

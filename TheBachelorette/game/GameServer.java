@@ -229,7 +229,7 @@ public class GameServer implements Runnable {
 		} else if (stage == 3) {
 			if (p.isAnswerCorrect(msg)) {
 				message = "Congratulations, that is the correct answer!";// You have got that girls number.\n Press Enter to continue...";
-				p.updateCurrentPoints();
+				p.updateCurrentPoints(girls.get(p.getCurrentGirl()));
 				if (p.getCurrentPoints() < 10) {
 					message += "However, you are now at "+p.getCurrentPoints()+"you still need "+(10-p.getCurrentPoints())+ " points in order to get this girls number."
 					+" You will need to choose something else to impress a girl\nWhat would you like to use to impress a" +
@@ -276,7 +276,7 @@ public class GameServer implements Runnable {
 		for (int i = 0; i < girls.size(); i++) {
 			if (!p.isGirlSeen(i)) {
 				List<Look> looks = girls.get(i).getLooks();
-				message+= "Girl"+i+" has ";
+				message+= "Girl"+(i+1)+" has ";
 				message+= looks.get(0).getLookValue()+" hair, ";
 				message+= looks.get(1).getLookValue()+" eyes, ";
 				message+= looks.get(2).getLookValue()+" body type.";
@@ -298,15 +298,15 @@ public class GameServer implements Runnable {
 			String name = "girl"+i;
 
 			// Choose things girls don't like
-			for (int j = 0; j < 2; j++) {
+			/*for (int j = 0; j < 2; j++) {
 				n = generator.nextInt(Attributes.values().length);
 				while (seen.contains(n)){
 					n = generator.nextInt(Attributes.values().length);
 				}
 				seen.add(n);
 				aList.add(new Attribute(Attributes.values()[n].toString(), 5));
-			}
-			
+			}*/
+			aList.add(new Attribute(Attributes.CHARM.toString(), 5));
 			aLook = new ArrayList<Look>();
 			n = generator.nextInt(HairColour.values().length);
 			aLook.add(new Look("HAIR", HairColour.values()[n].toString()));
