@@ -1,5 +1,7 @@
 package client;
 
+import java.io.IOException;
+
 import game.PlayerCharacter;
 
 import org.json.JSONException;
@@ -29,6 +31,10 @@ public class ProcessIncomingMessages implements Runnable {
 					JSONObject j = new JSONObject(s);
 					if (j.has("Message")) {
 						System.out.println(j.get("Message"));
+						if (j.has("UpdateCharacter")) {
+							gc.updateCharacterFlag = true;
+						}
+						
 					} else if (j.has("PlayerID")) {
 						System.out.println("playerId geting set " + j.getString("PlayerID"));
 						gc.playerID = j.getString("PlayerID");

@@ -142,17 +142,18 @@ public class GameServer implements Runnable {
 						
 						if (characters.size() == 2) {
 							for (int i = 0; i < characters.size(); i++) {
-								clientOutgoingMsgs.get(i).add(playGame(characters.get(i), null).toString());
+								clientOutgoingMsgs.get(i).add(playGame(characters.get(i), new JSONObject("{\"Message\" : \"\" }")).toString());
 							}
 							/*
 							client1OutgoingMsgs.add(playGame(characters.get(0), null).toString());
 							client2OutgoingMsgs.add(playGame(characters.get(1), null).toString());
 							*/
 						}
+
 						
 					} else {
 						int index = Integer.parseInt(j.getString("PlayerID"))-1;
-						clientOutgoingMsgs.get(index).add(playGame(characters.get(index),j.getString("Message")).toString());
+						clientOutgoingMsgs.get(index).add(playGame(characters.get(index),j).toString());
 						
 					}
 				
@@ -197,18 +198,20 @@ public class GameServer implements Runnable {
 		m_msgServerThread.interrupt();
 	}
 	
-	private JSONObject playGame(PlayerCharacter p, String msg) throws JSONException {
+	private JSONObject playGame(PlayerCharacter p, JSONObject incomingJSON) throws JSONException {
 		int stage = p.stageNumber();
 		JSONObject j = new JSONObject();
 		String content ="";
 		String message = "";
+		System.out.println("Play Game: " + incomingJSON.toString());
+		String msg = incomingJSON.getString("Message");
 		if (stage == 0) {
-			message = "\n\nWhich girl would you like to try and get a number from?\n" +
+			message = "\n\nWhich girl would you like to approach?\n" +
 					girlInfo(p)+"\nType a number to select a girl\n";
 			j.put("Message", message);
 			p.updateStage(1);
 		} else if (stage == 1 && p.isGirlSeen(Integer.parseInt(msg))) {
-			message = "You have already got that girl's number!\nChoose another girl you would like to try and get a number from.\n" +
+			message = "You have already got that girl's number!\nChoose another girl to approach.\n" +
 			girlInfo(p)+"\n";
 			j.put("Message", message);
 		} else if (stage == 1 && !p.isGirlSeen(Integer.parseInt(msg))) {
@@ -238,17 +241,15 @@ public class GameServer implements Runnable {
 							" 3. Reveal the truth    4. Tell a joke    5. Buy her a drink\nType a number to select what to use\n";
 					p.updateStage(2);
 				}else {
-					message+=" You have also got enough points and been lucky enough to get this girls number! \nPress Enter to continue.";
+					message+=" You have been successful in acquiring this girl's phone number! \nPress Enter to continue.";
 					//Send message to other player(s) that this player got a girl's number
-					//loop through queus, for all queues not including this one, add message
+					//loop through queues, for all queues not including this one, add message
 					for (int i = 0; i < characters.size(); i++) {  //&& i!=Integer.parseInt(p.getPlayerID()) - 1
 						System.out.println("PlayerID = " + p.getPlayerID());
 						if (i != Integer.parseInt(p.getPlayerID()) - 1 )
 						clientOutgoingMsgs.get(i).add("{\"Message\" : \"" + p.getName() + " got a girl's number! Don't get left behind!\"}");
 					}
-					
-					
-					p.updateStage(4);
+					p.updateStage(6);
 				}
 				j.put("Message", message);
 				 p.setGirlSeen();
@@ -276,6 +277,28 @@ public class GameServer implements Runnable {
  				j.put("Message", message);
  				p.updateStage(2);
  			}
+ 		} else if (stage == 6) {
+ 			//give more points to add to attributes
+ 			message = "You have been awarded 2 more attribute points to add to attributes of your choice. Press Enter to continue...";
+ 			j.put("Message", message);
+ 			j.put("UpdateCharacter", "");
+ 			p.updateStage(7);
+ 		}  else if (stage == 7) {
+ 			if (!msg.equals("")) {
+ 				//Update points
+				System.out.println("Stage 7: " + incomingJSON.toString());
+ 				PlayerCharacter c = characters.get(Integer.parseInt(incomingJSON.getString("PlayerID"))-1);
+				JSONObject uc = incomingJSON.getJSONObject("UpdateCharacter");
+ 				List<Attribute> l = c.getAttributes();
+				for (Attribute a : l) {
+					a.setAttributeValue(a.getAttributeValue() + uc.getInt(a.getAttributeType()));
+				}
+				for (Attribute a : l) { 
+					System.out.println(a.getAttributeType() + " : " + a.getAttributeValue());
+				}
+ 				p.updateStage(4);
+ 			}
+ 			j.put("Message", "Press Enter to continue");
  		}
 		
 		return j;
