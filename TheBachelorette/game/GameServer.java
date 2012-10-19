@@ -231,7 +231,7 @@ public class GameServer implements Runnable {
 				message = "Congratulations, that is the correct answer!";// You have got that girls number.\n Press Enter to continue...";
 				p.updateCurrentPoints(girls.get(p.getCurrentGirl()));
 				if (p.getCurrentPoints() < 10) {
-					message += "However, you are now at "+p.getCurrentPoints()+"you still need "+(10-p.getCurrentPoints())+ " points in order to get this girls number."
+					message += "However, you are now at "+p.getCurrentPoints()+"you still need "+(p.getPointsNeeded()-p.getCurrentPoints())+ " points in order to get this girls number."
 					+" You will need to choose something else to impress a girl\nWhat would you like to use to impress a" +
 							" girl and get her number?\n 1. Show your intelligence    2. Use a cheesy pick up line   " +
 							" 3. Reveal the truth    4. Tell a joke    5. Buy her a drink\nType a number to select what to use\n";

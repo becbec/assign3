@@ -16,6 +16,7 @@ public class PlayerCharacter {
 	private int numberOfGirls;
 	private int currentGirl;
 	private double currentPoints;
+	private double pointsNeeded;
 	private int[] challenges;
 	
 	public PlayerCharacter(String name, List<Attribute> attributes, List<Look> looks){
@@ -31,6 +32,8 @@ public class PlayerCharacter {
 		stage = 0;
 		challengeNumber = -1;
 		numberOfGirls = 0;
+		pointsNeeded = 5;
+		currentPoints = 0;
 	}
 
 	public List<Attribute> getAttributes() {
@@ -76,6 +79,11 @@ public class PlayerCharacter {
 	
 	public void setGirlSeen() {
 		girlsSeen[currentGirl] = 1;
+		currentPoints = 0;
+		pointsNeeded+=5;
+		for (int i = 0; i < 7; i++) {
+			challenges[i] = 0;
+		}
 	}
 	
 	public int stageNumber() {
@@ -176,10 +184,16 @@ public class PlayerCharacter {
 		currentPoints += value-tmpV;
 		challenges[challengeNumber] = 1;
 		
+		if (currentPoints < 0) currentPoints = 0;
+		
 		return "value = " +value+" currentPoints = "+currentPoints;
 	}
 
 	public double getCurrentPoints() {
 		return currentPoints;
+	}
+	
+	public double getPointsNeeded() {
+		return pointsNeeded;
 	}
 }
