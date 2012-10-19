@@ -36,7 +36,7 @@ public class CharmChallenege implements Challenge {
         pickUps.add("My lips are skittles, wanna taste the rainbow?");
         pickUps.add("Excuse me, do you have any raisins? How about a date?");
         pickUps.add("Well, here I am. What were your other two wishes?");
-        pickUps.add("So, do you have a new years resolution, I’m looking at mine right now.");
+        pickUps.add("So, do you have a new years resolution, I'm looking at mine right now.");
         pickUps.add("Somebody call the cops, because it's got to be illegal to look that good!");
         pickUps.add("Do you have any raisins? No? How about a date?");
         pickUps.add("Do you have an eraser? Because I can't get you out of my mind.");
@@ -56,13 +56,13 @@ public class CharmChallenege implements Challenge {
         pickUpLength = pickUpLine.length;
 
         for (int i = 0; i < pickUpLength; i++) {
-            String word = pickUpLine[i];
+            //String word = pickUpLine[i];
             challenge+=i+"."+shuffled[i]+"   ";
-            for (int j = 0; j < pickUpLength; j++) {
+            /*for (int j = 0; j < pickUpLength; j++) {
                 if (word.equals(shuffled[j])) {
                     order+=j+" ";
                 }
-            }
+            }*/
         }
         System.out.println("Order "+order);
         message+="Charm Challenge!\n\nTo pick up a girl using your charm you will need to rearrange the pickup line " +
@@ -74,10 +74,10 @@ public class CharmChallenege implements Challenge {
 
     @Override
     public boolean checkAnswer(String answer) {
-        String[] orderNumber = order.split(" ");
-        String[] answerNumber = answer.split(" ");
+       // String[] orderNumber = order.split(" ");
+       // String[] answerNumber = answer.split(" ");
 
-        if (pickUpLength != answerNumber.length) {
+        /*if (pickUpLength != answerNumber.length) {
             return false;
         }
 
@@ -85,8 +85,11 @@ public class CharmChallenege implements Challenge {
             if (!orderNumber[i].equals(answerNumber[i])) {
                 return false;
             }
+        }*/
+        if (answer.equals(pickUps.get(pickUpIndex))) {
+        	return true;
         }
 
-        return true;
+        return false;
     }
 }

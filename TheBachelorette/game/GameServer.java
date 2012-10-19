@@ -130,6 +130,7 @@ public class GameServer implements Runnable {
 							ll.add(new Look("BODY", jo.getString("BODY")));
 						}
 						
+						
 						PlayerCharacter p = new PlayerCharacter(name, la, ll);
 						characters.add(p);
 						// characters.add(Integer.parseInt(pid)-1, p);
@@ -198,21 +199,16 @@ public class GameServer implements Runnable {
 	private JSONObject playGame(PlayerCharacter p, String msg) throws JSONException {
 		int stage = p.stageNumber();
 		JSONObject j = new JSONObject();
+		String content ="";
 		String message = "";
 		if (stage == 0) {
 			message = "\n\nWhich girl would you like to try and get a number from?\n" +
-					"Girl1, Girl2, Girl3, Girl4, Girl5, Girl6\nType a number to select a girl\n";
+					girlInfo(p)+"\nType a number to select a girl\n";
 			j.put("Message", message);
 			p.updateStage(1);
 		} else if (stage == 1 && p.isGirlSeen(Integer.parseInt(msg))) {
-			String content ="";
-			for (int i = 0; i < girls.size(); i++) {
-				if (!p.isGirlSeen(i)) {
-					content+="Girl"+i+"  ";
-				}
-			}
 			message = "You have already got that girl's number!\nChoose another girl you would like to try and get a number from.\n" +
-			content+"\n";
+			girlInfo(p)+"\n";
 			j.put("Message", message);
 		} else if (stage == 1 && !p.isGirlSeen(Integer.parseInt(msg))) {
 			message = "What would you like to use to impress a girl and get her number?\n" +
@@ -221,9 +217,15 @@ public class GameServer implements Runnable {
 			j.put("Message", message);
 			p.updateStage(2);
 		} else if (stage == 2) {
-			message = p.initChallenege(Integer.parseInt(msg));
+			if (p.isChallengeComplete(Integer.parseInt(msg))) {
+				message = "You have used this to impress this girl. Choose something else to try and impress the girl further"+
+				"1. Show your intelligence    2. Use a cheesy pick up line    3. Reveal the truth    4. Tell a joke" +
+				"    5. Buy her a drink\nType a number to select what to use\n";
+			} else {
+				message = p.initChallenege(Integer.parseInt(msg));
+				p.updateStage(3);
+			}
 			j.put("Message", message);
-			p.updateStage(3);
 		} else if (stage == 3) {
 			if (p.isAnswerCorrect(msg)) {
 				message = "Congratulations, that is the correct answer!";// You have got that girls number.\n Press Enter to continue...";
@@ -235,29 +237,21 @@ public class GameServer implements Runnable {
 							" 3. Reveal the truth    4. Tell a joke    5. Buy her a drink\nType a number to select what to use\n";
 					p.updateStage(2);
 				}else {
-					message+=" You have also go enough points and been lucky enough to get this girls number! Press Enter to continue.";
+					message+=" You have also got enough points and been lucky enough to get this girls number! \nPress Enter to continue.";
 					p.updateStage(4);
 				}
-				
 				j.put("Message", message);
-				
-				p.setGirlSeen();
+				 p.setGirlSeen();
 			} else if (!p.isAnswerCorrect(msg)) {
-				message = "That is not the correct answer.\n Would you like to: 1. Try again at using this challenge to impress a girl, or\n" +
+				message = "That is not the correct answer.\n Would you like to: \n1. Try again at using this challenge to impress a girl, or\n" +
 						"2. Go back impress a girl using something else. Type a number to select your choice.";
 				j.put("Message", message);
 				p.updateStage(5);
 			}
  		} else if (stage == 4) {
  			p.updateNumberOfGirls();
- 			String content ="";
-			for (int i = 0; i < girls.size(); i++) {
-				if (!p.isGirlSeen(i)) {
-					content+="Girl"+i+"  ";
-				}
-			}
  			message = "Which girl would you like to try and get another number from?\n" +
-			content+"\nType a number to select a girl\n";
+ 			girlInfo(p)+"\nType a number to select a girl\n";
  			j.put("Message", message);
  			p.updateStage(1);
  		} else if (stage == 5) {
@@ -277,6 +271,22 @@ public class GameServer implements Runnable {
 		return j;
 	}
 	
+	private String girlInfo(PlayerCharacter p) {
+		String message = "";
+		for (int i = 0; i < girls.size(); i++) {
+			if (!p.isGirlSeen(i)) {
+				List<Look> looks = girls.get(i).getLooks();
+				message+= "Girl"+i+" has ";
+				message+= looks.get(0).getLookValue()+" hair, ";
+				message+= looks.get(1).getLookValue()+" eyes, ";
+				message+= looks.get(2).getLookValue()+" body type.";
+			}
+			message+="\n";
+		}
+		
+		return message;
+	}
+	
 	private static List<PlayerCharacter> setGirls(List<PlayerCharacter> girls) { //TODO: This should be on the server, not the client, 
 		//otherwise the girls wont be the same for both clients! Robin says fuck off, but not before fixing stuff
 		Random generator = new Random();
@@ -284,13 +294,10 @@ public class GameServer implements Runnable {
 		List<Look> aLook = new ArrayList<Look>();
 		int n;
 		List<Integer> seen = new ArrayList<Integer>();
-		
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < 5; i++) {
 			String name = "girl"+i;
-			
-			// Girls choose n things they don't like. and if a player completes a challenge then you take 1/5 their score
-			// ie less positive points
-			
+
+			// Choose things girls don't like
 			for (int j = 0; j < 2; j++) {
 				n = generator.nextInt(Attributes.values().length);
 				while (seen.contains(n)){
@@ -300,26 +307,30 @@ public class GameServer implements Runnable {
 				aList.add(new Attribute(Attributes.values()[n].toString(), 5));
 			}
 			
+			aLook = new ArrayList<Look>();
 			n = generator.nextInt(HairColour.values().length);
-			aLook.add(new Look(HairColour.values()[n].toString(), "1"));
+			aLook.add(new Look("HAIR", HairColour.values()[n].toString()));
 			n = generator.nextInt(EyeColour.values().length);
-			aLook.add(new Look(EyeColour.values()[n].toString(), "1"));
+			aLook.add(new Look("EYE", EyeColour.values()[n].toString()));
 			n = generator.nextInt(BodyType.values().length);
-			aLook.add(new Look(BodyType.values()[n].toString(), "1"));
+			aLook.add(new Look("BODY", BodyType.values()[n].toString()));
 			
 			girls.add(new PlayerCharacter(name,aList,aLook));
 		}
 		
 		// overwrite different looks
-		for (int i = 0; i < 3; i++) {
+		/*for (int i = 0; i < 5; i++) {
 			String name = "girl"+i;
 			aList.add(new Attribute(Attributes.CHARM.toString(), 5));
-			aLook.add(new Look(HairColour.BLACK.toString(), "1"));
-			aLook.add(new Look(EyeColour.BLUE.toString(), "1"));
-			aLook.add(new Look(BodyType.ATHLETIC.toString(), "1"));
+			aLook = new ArrayList<Look>();
+			//ll.add(new Look("HAIR", jo.getString("HAIR")));
+			
+			aLook.add(new Look("HAIR", "blue"));
+			aLook.add(new Look("EYES", "blue"));
+			aLook.add(new Look("BODY", "athletic"));
 			
 			girls.add(new PlayerCharacter(name, aList, aLook));
-		}
+		}*/
 		
 		return girls;
 	}

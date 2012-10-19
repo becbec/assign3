@@ -15,14 +15,17 @@ public class PlayerCharacter {
 	private int numberOfGirls;
 	private int currentGirl;
 	private double currentPoints;
+	private int[] challenges;
 	
 	public PlayerCharacter(String name, List<Attribute> attributes, List<Look> looks){
 		this.name = name;
 		this.attributes = new ArrayList<Attribute>(attributes);
 		this.looks = new ArrayList<Look>(looks);
 		girlsSeen = new int[7];
+		challenges = new int[7];
 		for (int i = 0; i < 7; i++) {
 			girlsSeen[i] = 0;
+			challenges[i] = 0;
 		}
 		stage = 0;
 		challengeNumber = -1;
@@ -120,6 +123,16 @@ public class PlayerCharacter {
 	public void updateNumberOfGirls() {
 		numberOfGirls++;
 	}
+
+	
+	public boolean isChallengeComplete(int i) {
+		if (challenges[i] == 0) {
+			return false;
+		} else if (challenges[i] == 1) {
+			return true;
+		}
+		return false;
+	}
 	
 	public String updateCurrentPoints() {
 		double value = 0;
@@ -143,6 +156,7 @@ public class PlayerCharacter {
 		}
 
 		currentPoints += value;
+		challenges[challengeNumber] = 1;
 		
 		return "value = " +value+" currentPoints = "+currentPoints;
 	}
