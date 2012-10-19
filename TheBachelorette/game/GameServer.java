@@ -132,6 +132,7 @@ public class GameServer implements Runnable {
 						
 						
 						PlayerCharacter p = new PlayerCharacter(name, la, ll);
+						p.setPlayerID(Integer.toString(this.clientOutgoingMsgs.size() + 1));
 						characters.add(p);
 						// characters.add(Integer.parseInt(pid)-1, p);
 						
@@ -231,13 +232,22 @@ public class GameServer implements Runnable {
 				message = "Congratulations, that is the correct answer!";// You have got that girls number.\n Press Enter to continue...";
 				p.updateCurrentPoints();
 				if (p.getCurrentPoints() < 10) {
-					message += "However, you are now at "+p.getCurrentPoints()+"you still need "+(10-p.getCurrentPoints())+ " points in order to get this girls number."
+					message += "However, you are now at "+p.getCurrentPoints()+" you still need "+(10-p.getCurrentPoints())+ " points in order to get this girls number."
 					+" You will need to choose something else to impress a girl\nWhat would you like to use to impress a" +
 							" girl and get her number?\n 1. Show your intelligence    2. Use a cheesy pick up line   " +
 							" 3. Reveal the truth    4. Tell a joke    5. Buy her a drink\nType a number to select what to use\n";
 					p.updateStage(2);
 				}else {
 					message+=" You have also got enough points and been lucky enough to get this girls number! \nPress Enter to continue.";
+					//Send message to other player(s) that this player got a girl's number
+					//loop through queus, for all queues not including this one, add message
+					for (int i = 0; i < characters.size(); i++) {  //&& i!=Integer.parseInt(p.getPlayerID()) - 1
+						System.out.println("PlayerID = " + p.getPlayerID());
+						if (i != Integer.parseInt(p.getPlayerID()) - 1 )
+						clientOutgoingMsgs.get(i).add("{\"Message\" : \"" + p.getName() + " got a girl's number! Don't get left behind!\"}");
+					}
+					
+					
 					p.updateStage(4);
 				}
 				j.put("Message", message);

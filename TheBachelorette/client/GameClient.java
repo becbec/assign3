@@ -168,7 +168,7 @@ public class GameClient {
 		Thread t = new Thread(csConnection);
 		t.start();
 		//spawns thread to read incoming messages + print them
-		ProcessIncomingMessages pim = new ProcessIncomingMessages(csConnection, gc);
+		ProcessIncomingMessages pim = new ProcessIncomingMessages(csConnection, gc, character);
 		t = new Thread(pim);
 		t.start();
 		
