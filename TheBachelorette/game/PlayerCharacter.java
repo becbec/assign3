@@ -80,7 +80,7 @@ public class PlayerCharacter {
 	public void setGirlSeen() {
 		girlsSeen[currentGirl] = 1;
 		currentPoints = 0;
-		pointsNeeded+=5;
+		pointsNeeded+=2;
 		for (int i = 0; i < 7; i++) {
 			challenges[i] = 0;
 		}
