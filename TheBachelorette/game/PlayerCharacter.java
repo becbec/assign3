@@ -77,6 +77,14 @@ public class PlayerCharacter {
 		return true;
 	}
 	
+	public String getPlayerID() {
+		return playerID;
+	}
+
+	public void setPlayerID(String playerID) {
+		this.playerID = playerID;
+	}
+
 	public void setGirlSeen() {
 		girlsSeen[currentGirl] = 1;
 		currentPoints = 0;
@@ -196,4 +204,10 @@ public class PlayerCharacter {
 	public double getPointsNeeded() {
 		return pointsNeeded;
 	}
+
+	public String getName() {
+		return name;
+	}
+
+
 }

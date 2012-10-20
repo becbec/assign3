@@ -1,15 +1,21 @@
 package client;
 
+import java.io.IOException;
+
+import game.PlayerCharacter;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class ProcessIncomingMessages implements Runnable {
 	ClientServerConnection csConnection;
 	GameClient gc;
+	PlayerCharacter character;
 	
-	public ProcessIncomingMessages(ClientServerConnection connection, GameClient gc) {
+	public ProcessIncomingMessages(ClientServerConnection connection, GameClient gc, PlayerCharacter character) {
 		csConnection = connection;
 		this.gc = gc;
+		this.character = character;
 	}
 
 	@Override
@@ -25,13 +31,15 @@ public class ProcessIncomingMessages implements Runnable {
 					JSONObject j = new JSONObject(s);
 					if (j.has("Message")) {
 						System.out.println(j.get("Message"));
+						if (j.has("UpdateCharacter")) {
+							gc.updateCharacterFlag = true;
+						}
+						
 					} else if (j.has("PlayerID")) {
 						System.out.println("playerId geting set " + j.getString("PlayerID"));
-						gc.playerID = j.getString("PlayerID"); 
+						gc.playerID = j.getString("PlayerID");
 					}
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					//e.printStackTrace();
 					System.err.println("Error in PIM - converting string to JSON");
 				}
 				

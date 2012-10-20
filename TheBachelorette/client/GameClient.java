@@ -19,23 +19,25 @@ import org.json.JSONObject;
 import org.json.JSONException;
 
 public class GameClient {
+	public boolean updateCharacterFlag;
 	public String playerID;
 	public BufferedReader lineOfText;
 	public Integer points;
-	public int remainingPoints;
 	public String name;
 	public List<Attribute> attrs;
 	public List<Look> looks;
 	
+	
 	public GameClient() {
+		updateCharacterFlag = false;
 		playerID = "";
 		lineOfText = new BufferedReader(new InputStreamReader(System.in));
 		points = 0;
-		remainingPoints = 20;
 		name = "";
 		attrs = new ArrayList<Attribute>();
 		looks = new ArrayList<Look>();
 	}
+	
 	
 	public static void main(String[] args) throws JSONException, InterruptedException {
 		GameClient gc = new GameClient();
@@ -53,43 +55,12 @@ public class GameClient {
 	    	System.out.println("Please enter your name");
 			//gc.name = gc.lineOfText.readLine();
 	    	gc.name = "Ruth";
-			System.out.println("You have " + gc.remainingPoints + " points to assign to the following attributes: ");
-			System.out.println("INTELLIGENCE, LOOKS, CHARM, HONESTY, STRENGTH, KINDNESS, HUMOUR, ");
-			System.out.println("ENTHUSIASM, ADAPTABILITY, RELIABILITY, and GENEROSITY");
+			
 
 
 
-			for (Attributes attr : Attributes.values()) { 
-				if (gc.remainingPoints ==0 ) {
-					Attribute newAttr = new Attribute(attr.toString(), 0);
-					gc.attrs.add(newAttr);
-				} else {
-
-					System.out.println();
-					System.out.println("You have " + gc.remainingPoints + " points remaining");
-					System.out.println("How many points would you like to assign to " + attr);
-					temp = gc.lineOfText.readLine();
-					gc.points = tryParse(temp);
-					while (gc.points == null) {
-						System.out.println("Please make sure to enter numbers only");
-						System.out.println("How many points would you like to assign to " + attr);
-						temp = gc.lineOfText.readLine();
-						gc.points = Integer.parseInt(temp);
-					}
-					
-					if (gc.points <= gc.remainingPoints) {
-						Attribute newAttr = new Attribute(attr.toString(), gc.points);
-						gc.attrs.add(newAttr);
-						gc.remainingPoints -= gc.points;
-					} else {
-						Attribute newAttr = new Attribute(attr.toString(), gc.remainingPoints);
-						gc.attrs.add(newAttr);
-						System.out.println("You only had " + gc.remainingPoints + " points remaining. These points were assigned to " + attr.toString());
-						gc.remainingPoints= 0;
-					}
-				}
-
-			}
+		//assign attributes
+			assignAttributes(gc, 20);
 
 				int selected = 0;
 				Look l = new Look();
@@ -168,7 +139,7 @@ public class GameClient {
 		Thread t = new Thread(csConnection);
 		t.start();
 		//spawns thread to read incoming messages + print them
-		ProcessIncomingMessages pim = new ProcessIncomingMessages(csConnection, gc);
+		ProcessIncomingMessages pim = new ProcessIncomingMessages(csConnection, gc, character);
 		t = new Thread(pim);
 		t.start();
 		
@@ -188,6 +159,19 @@ public class GameClient {
 		//main thread blocks and waits for user input
 		String input;
 		while (true) {
+			if (gc.updateCharacterFlag) {
+				assignAttributes(gc, 2);
+				JSONObject j = new JSONObject();
+				JSONObject jo = new JSONObject();
+				for (Attribute a : gc.attrs) {
+					jo.put(a.getAttributeType(), a.getAttributeValue());
+				}
+				j.put("UpdateCharacter", jo);
+				j.put("Message", "0");
+				j.put("PlayerID",  gc.playerID);
+				csConnection.m_outgoingMsgQueue.add(j.toString());
+				gc.updateCharacterFlag = false;
+			}
 			 input = gc.lineOfText.readLine();
 			 JSONObject j = new JSONObject();
 			 j.put("PlayerID", gc.playerID);
@@ -201,9 +185,50 @@ public class GameClient {
 		}
 	}
 
+	private static void assignAttributes(GameClient gc, int remainingPoints) throws IOException {
+		System.out.println("You have " + remainingPoints + " attribute points to assign to the following attributes: ");
+		System.out.println("INTELLIGENCE, LOOKS, CHARM, HONESTY, STRENGTH, KINDNESS, HUMOUR, ");
+		System.out.println("ENTHUSIASM, ADAPTABILITY, RELIABILITY, and GENEROSITY");
+		gc.attrs = new ArrayList<Attribute>();
+				
+		String temp;
+		for (Attributes attr : Attributes.values()) { 
+			if (remainingPoints ==0 ) {
+				Attribute newAttr = new Attribute(attr.toString(), 0);
+				gc.attrs.add(newAttr);
+			} else {
+
+				System.out.println();
+				System.out.println("You have " + remainingPoints + " points remaining");
+				System.out.println("How many points would you like to assign to " + attr);
+				temp = gc.lineOfText.readLine();
+				gc.points = tryParse(temp);
+				while (gc.points == null) {
+					System.out.println("Please make sure to enter numbers only");
+					System.out.println("How many points would you like to assign to " + attr);
+					temp = gc.lineOfText.readLine();
+					gc.points = Integer.parseInt(temp);
+				}
+				
+				if (gc.points <= remainingPoints) {
+					Attribute newAttr = new Attribute(attr.toString(), gc.points);
+					gc.attrs.add(newAttr);
+					remainingPoints -= gc.points;
+				} else {
+					Attribute newAttr = new Attribute(attr.toString(), remainingPoints);
+					gc.attrs.add(newAttr);
+					System.out.println("You only had " + remainingPoints + " points remaining. These points were assigned to " + attr.toString());
+					remainingPoints= 0;
+				}
+			}
+
+		}
+		
+	}
+
 	private static JSONObject createJSONCharacterMsg(PlayerCharacter character, GameClient gc) throws JSONException {
 		JSONObject jt = new JSONObject();
-		jt.put("PlayerID", gc.playerID );
+		//jt.put("PlayerID", gc.playerID );
 		
 		JSONObject J_character = new JSONObject();
 		J_character.put("Name", gc.name);
@@ -214,6 +239,7 @@ public class GameClient {
 			J_character.put(l.getLookType(), l.getLookValue());	
 		}
 		jt.put("Character", J_character);
+		jt.put("Message", "0");
 		return jt;
 	}
 
@@ -225,4 +251,16 @@ public class GameClient {
 			return null;
 		}
 	}
+/*
+	public void updateCharacter() throws IOException, JSONException {
+		assignAttributes(this, 2);
+		JSONObject j = new JSONObject();
+		JSONObject jo = new JSONObject();
+		for (Attribute a : attrs) {
+			jo.put(a.getAttributeType(), a.getAttributeValue());
+		}
+		j.put("UpdateCharacter", jo);
+		this.updateCharacterFlag = false;
+	}
+	*/
 }
