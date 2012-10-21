@@ -209,7 +209,7 @@ public class GameServer implements Runnable {
 		String message = "";
 		System.out.println("Play Game: " + incomingJSON.toString());
 		String msg = incomingJSON.getString("Message");
-		if (p.getChallengeNumber() == 1) {
+		if (p.getChallengeNumber() == 5) {
 			message = "You won the game!";
 			for (int i = 0; i < characters.size(); i++) {  //TODO: make the game end!
 				System.out.println("PlayerID = " + p.getPlayerID());
