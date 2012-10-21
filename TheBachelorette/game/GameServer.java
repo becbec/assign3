@@ -166,14 +166,18 @@ public class GameServer implements Runnable {
 				GameServer.m_client1GameEndTime.add(Calendar.SECOND, 30);
 			}
 			// check game ended?
-			/*
-			if (Calendar.getInstance().after(GameServer.m_client1GameEndTime))
-			{
+			
+			//if (characters.get(i).)
+			//if (Calendar.getInstance().after(GameServer.m_client1GameEndTime))
+			/*{
 				//update games states, determine if player won/lost, how many points they got etc
-				client1OutgoingMsgs.add("You won!");
-				client2OutgoingMsgs.add("Player 1 won the girl!");
-			}
-			*/
+				//client1
+				clientOutgoingMsgs.get(0).add("You won!");
+				clientOutgoingMsgs.get(1).add("Player 1 won the girl!");
+				//client1OutgoingMsgs.add("You won!");
+				//client2OutgoingMsgs.add("Player 1 won the girl!");
+			} */
+			
 			
 			// check client2 game
 			for (int i = 0; i < characters.size(); i++)
@@ -205,7 +209,15 @@ public class GameServer implements Runnable {
 		String message = "";
 		System.out.println("Play Game: " + incomingJSON.toString());
 		String msg = incomingJSON.getString("Message");
-		if (stage == 0) {
+		if (p.getChallengeNumber() == 1) {
+			message = "You won the game!";
+			for (int i = 0; i < characters.size(); i++) {  //TODO: make the game end!
+				System.out.println("PlayerID = " + p.getPlayerID());
+				if (i != Integer.parseInt(p.getPlayerID()) - 1 )
+				clientOutgoingMsgs.get(i).add("{\"Message\" : \"" + p.getName() + " won the game and got the girl!\"}");
+			}
+			j.put("Message", message);
+		} else if (stage == 0) {
 			message = "\n\nWhich girl would you like to approach?\n" +
 					girlInfo(p)+"\nType a number to select a girl\n";
 			j.put("Message", message);
