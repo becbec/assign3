@@ -218,24 +218,28 @@ public class GameServer implements Runnable {
 			message = "What would you like to use to impress a girl and get her number?\n" +
 					"1. Show your intelligence    2. Use a cheesy pick up line    3. Reveal the truth    4. Tell a joke" +
 					"    5. Buy her a drink\nType a number to select what to use\n";
+			
+			p.setGirl(Integer.parseInt(msg));
 			j.put("Message", message);
 			p.updateStage(2);
+			
 		} else if (stage == 2) {
+			message+= p.isChallengeComplete(Integer.parseInt(msg));
 			if (p.isChallengeComplete(Integer.parseInt(msg))) {
 				message = "You have used this to impress this girl. Choose something else to try and impress the girl further"+
 				"1. Show your intelligence    2. Use a cheesy pick up line    3. Reveal the truth    4. Tell a joke" +
 				"    5. Buy her a drink\nType a number to select what to use\n";
 			} else {
-				message = p.initChallenege(Integer.parseInt(msg));
+				message += p.initChallenege(Integer.parseInt(msg));
 				p.updateStage(3);
 			}
 			j.put("Message", message);
 		} else if (stage == 3) {
 			if (p.isAnswerCorrect(msg)) {
-				message = "Congratulations, that is the correct answer!";// You have got that girls number.\n Press Enter to continue...";
-				p.updateCurrentPoints(girls.get(p.getCurrentGirl()));
+				message += "Congratulations, that is the correct answer!";// You have got that girls number.\n Press Enter to continue...";
+				message += p.updateCurrentPoints(girls.get(p.getCurrentGirl()));
 				if (p.getCurrentPoints() < 10) {
-					message += "However, you are now at "+p.getCurrentPoints()+"you still need "+(p.getPointsNeeded()-p.getCurrentPoints())+ " points in order to get this girls number."
+					message += " However, you are now at "+p.getCurrentPoints()+"you still need "+(p.getPointsNeeded()-p.getCurrentPoints())+ " points in order to get this girls number."
 					+" You will need to choose something else to impress a girl\nWhat would you like to use to impress a" +
 							" girl and get her number?\n 1. Show your intelligence    2. Use a cheesy pick up line   " +
 							" 3. Reveal the truth    4. Tell a joke    5. Buy her a drink\nType a number to select what to use\n";
@@ -250,9 +254,9 @@ public class GameServer implements Runnable {
 						clientOutgoingMsgs.get(i).add("{\"Message\" : \"" + p.getName() + " got a girl's number! Don't get left behind!\"}");
 					}
 					p.updateStage(6);
+					p.setGirlSeen();
 				}
 				j.put("Message", message);
-				 p.setGirlSeen();
 			} else if (!p.isAnswerCorrect(msg)) {
 				message = "That is not the correct answer.\n Would you like to: \n1. Try again at using this challenge to impress a girl, or\n" +
 						"2. Go back impress a girl using something else. Type a number to select your choice.";
@@ -309,7 +313,7 @@ public class GameServer implements Runnable {
 		for (int i = 0; i < girls.size(); i++) {
 			if (!p.isGirlSeen(i)) {
 				List<Look> looks = girls.get(i).getLooks();
-				message+= "Girl"+(i+1)+" has ";
+				message+= "Girl"+(i)+" has ";
 				message+= looks.get(0).getLookValue()+" hair, ";
 				message+= looks.get(1).getLookValue()+" eyes, ";
 				message+= looks.get(2).getLookValue()+" body type.";
@@ -350,20 +354,6 @@ public class GameServer implements Runnable {
 			
 			girls.add(new PlayerCharacter(name,aList,aLook));
 		}
-		
-		// overwrite different looks
-		/*for (int i = 0; i < 5; i++) {
-			String name = "girl"+i;
-			aList.add(new Attribute(Attributes.CHARM.toString(), 5));
-			aLook = new ArrayList<Look>();
-			//ll.add(new Look("HAIR", jo.getString("HAIR")));
-			
-			aLook.add(new Look("HAIR", "blue"));
-			aLook.add(new Look("EYES", "blue"));
-			aLook.add(new Look("BODY", "athletic"));
-			
-			girls.add(new PlayerCharacter(name, aList, aLook));
-		}*/
 		
 		return girls;
 	}

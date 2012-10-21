@@ -69,8 +69,8 @@ public class PlayerCharacter {
 		}
 	}
 	
-	public boolean isGirlSeen(int i) {
-		if (girlsSeen[i] == 0) { //TODO: This is causing an exception, fix this
+	public boolean isGirlSeen(int n) {
+		if (girlsSeen[n] == 0) {
 			return false;
 		}
 		
@@ -89,6 +89,7 @@ public class PlayerCharacter {
 		girlsSeen[currentGirl] = 1;
 		currentPoints = 0;
 		pointsNeeded+=2;
+		numberOfGirls++;
 		for (int i = 0; i < 7; i++) {
 			challenges[i] = 0;
 		}
@@ -102,28 +103,27 @@ public class PlayerCharacter {
 		this.stage = stage;
 	}
 	
+	public void setGirl(int n) {
+		currentGirl = n;
+	}
+	
 	public String initChallenege(int n) {
 		challengeNumber = n;
 		
 		if (n == 1) {
-			currentGirl = 1;
 			challenge = "INTELLIGENCE";
 			ch = new IntelligenceChallenge();
 		} else if (n == 2) {
-			currentGirl = 2;
 			challenge = "CHARM";
 			ch = new CharmChallenege();
 		} else if (n == 3) {
-			currentGirl = 3;
 			challenge = "HONESTY";
 			ch = new HonestyChallenge();
 		} else if (n == 4) {
-			currentGirl = 4;
 			challenge = "HUMOUR";
 			ch = new HumourChallenege();
 		} else if (n == 5) {
 			challenge = "GENEROSITY";
-			currentGirl = 5;
 			ch = new GenerosityChallenge();
 		}
 		
@@ -194,7 +194,7 @@ public class PlayerCharacter {
 		
 		if (currentPoints < 0) currentPoints = 0;
 		
-		return "value = " +value+" currentPoints = "+currentPoints;
+		return "value = " +value+" currentPoints = "+currentPoints+ " challenge number = "+challengeNumber+" this is "+challenges[challengeNumber];
 	}
 
 	public double getCurrentPoints() {

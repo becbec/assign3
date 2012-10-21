@@ -31,7 +31,7 @@ public class CharmChallenege implements Challenge {
         pickUps.add("I hope you know CPR, because you take my breath away!");
         pickUps.add("I seemed to have lost my way, would you mind taking me with you.");
         pickUps.add("You're so hot you would make the devil sweat.");
-        pickUps.add("Was you father an alien? Because there's nothing else like you on earth!");
+        pickUps.add("Was your father an alien? Because there's nothing else like you on earth!");
         pickUps.add("You must be a magnet, because it looks like you are attracted to my buns of steel.");
         pickUps.add("My lips are skittles, wanna taste the rainbow?");
         pickUps.add("Excuse me, do you have any raisins? How about a date?");
