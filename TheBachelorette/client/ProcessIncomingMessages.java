@@ -26,7 +26,7 @@ public class ProcessIncomingMessages implements Runnable {
 		while(true) {
 			if (!csConnection.m_incomingMsgQueue.isEmpty()) {
 				s = csConnection.m_incomingMsgQueue.remove();
-				System.out.println("PIM:" + s);
+				//System.out.println("PIM:" + s);
 				try {
 					JSONObject j = new JSONObject(s);
 					if (j.has("Message")) {
@@ -36,7 +36,7 @@ public class ProcessIncomingMessages implements Runnable {
 						}
 						
 					} else if (j.has("PlayerID")) {
-						System.out.println("playerId geting set " + j.getString("PlayerID"));
+						//System.out.println("playerId geting set " + j.getString("PlayerID"));
 						gc.playerID = j.getString("PlayerID");
 					}
 				} catch (JSONException e) {
