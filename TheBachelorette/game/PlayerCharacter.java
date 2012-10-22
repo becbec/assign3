@@ -18,7 +18,16 @@ public class PlayerCharacter {
 	private double currentPoints;
 	private double pointsNeeded;
 	private int[] challenges;
+	private int clothing;
 	
+	public int getClothing() {
+		return clothing;
+	}
+
+	public void setClothing(int clothing) {
+		this.clothing = clothing;
+	}
+
 	public PlayerCharacter(String name, List<Attribute> attributes, List<Look> looks){
 		this.name = name;
 		this.attributes = new ArrayList<Attribute>(attributes);

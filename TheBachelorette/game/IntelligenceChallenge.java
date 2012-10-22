@@ -87,8 +87,8 @@ public class IntelligenceChallenge implements Challenge{
         }
 
         System.out.println("chosenword = "+chosenWords);
-        message += chosenWords+"Intelligence Challenge\n\nTo pick up a girl using your intelligence you will need to unscramble a word" +
-                "To do so, type what you think the unscrambled word is\n\n"+challenge+"\n\nType the answer here: \n";
+        message += chosenWords+"Intelligence Challenge\n\nTo pick up a girl using your intelligence you will need to unscramble 3 words.\n" +
+                "Type each word followed by a space then press Enter\n\n"+challenge+"\n\nType the answer here: \n";
 
 
         return message;

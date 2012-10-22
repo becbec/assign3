@@ -60,7 +60,7 @@ public class GameClient {
 
 
 		//assign attributes
-			assignAttributes(gc, 20);
+			assignAttributes(gc, 10);
 
 				int selected = 0;
 				Look l = new Look();
@@ -108,7 +108,7 @@ public class GameClient {
 				selected = 0;
 				
 				while (selected == 0) {
-					//Select Clothing
+					//select body type
 					System.out.println("Please select your BODY TYPE"); //add checks that they typed it correctly
 					System.out.print("Your choices are: ");
 					selection = "";
@@ -127,6 +127,8 @@ public class GameClient {
 				}
 				
 				gc.looks.add(l);
+				
+				System.out.println("You start off wearing BEACHWEAR");
 				
 			
 		PlayerCharacter character = new PlayerCharacter(gc.name,gc.attrs,gc.looks);
@@ -187,8 +189,7 @@ public class GameClient {
 
 	private static void assignAttributes(GameClient gc, int remainingPoints) throws IOException {
 		System.out.println("You have " + remainingPoints + " attribute points to assign to the following attributes: ");
-		System.out.println("INTELLIGENCE, LOOKS, CHARM, HONESTY, STRENGTH, KINDNESS, HUMOUR, ");
-		System.out.println("ENTHUSIASM, ADAPTABILITY, RELIABILITY, and GENEROSITY");
+		System.out.println("INTELLIGENCE, CHARM, HONESTY, HUMOUR, and GENEROSITY");
 		gc.attrs = new ArrayList<Attribute>();
 				
 		String temp;
