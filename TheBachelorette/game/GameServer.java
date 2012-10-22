@@ -256,7 +256,7 @@ public class GameServer implements Runnable {
 				}else {
 					message+=" You have been successful in acquiring this girl's phone number! \n";
 					p.setClothing(p.getClothing() +1);
-					message+="Your clothing has been upgraded to " + Clothing.values()[p.getClothing()] + "Press Enter to continue.\n";
+					message+="Your clothing has been upgraded to " + Clothing.values()[p.getClothing()] + ".\nPress Enter to continue...\n";
 					
 					//Send message to other player(s) that this player got a girl's number
 					//loop through queues, for all queues not including this one, add message
@@ -299,21 +299,28 @@ public class GameServer implements Runnable {
  			j.put("UpdateCharacter", "");
  			p.updateStage(7);
  		}  else if (stage == 7) {
+ 			int total = 0;
  			if (!msg.equals("")) {
  				//Update points
 				System.out.println("Stage 7: " + incomingJSON.toString());
  				PlayerCharacter c = characters.get(Integer.parseInt(incomingJSON.getString("PlayerID"))-1);
 				JSONObject uc = incomingJSON.getJSONObject("UpdateCharacter");
  				List<Attribute> l = c.getAttributes();
+ 				
 				for (Attribute a : l) {
 					a.setAttributeValue(a.getAttributeValue() + uc.getInt(a.getAttributeType()));
+					total += uc.getInt(a.getAttributeType());
 				}
 				for (Attribute a : l) { 
 					System.out.println(a.getAttributeType() + " : " + a.getAttributeValue());
 				}
  				p.updateStage(4);
  			}
- 			j.put("Message", "Press Enter to continue...");
+ 			if (total==2) {
+ 				j.put("Message", "Press Enter to continue...");
+ 			} else {
+ 				j.put("Message", "");
+ 			}
  		}
 		
 		return j;
