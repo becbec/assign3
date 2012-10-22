@@ -45,16 +45,16 @@ public class GameClient {
 		
 	    try { //TODO: error checking for server/port
 	    	System.out.println("Please enter the host server");
-			//String server = gc.lineOfText.readLine();
-	    	String server = "localhost"; //TODO: Remove
-			System.out.println("Please enter the host port");
+			String server = gc.lineOfText.readLine();
+	    	//String server = "localhost"; //TODO: Remove
+			//System.out.println("Please enter the host port");
 			String temp = "";
 			//String temp = gc.lineOfText.readLine();
 			//int port = Integer.parseInt(temp);
 			int port = 1338;
 	    	System.out.println("Please enter your name");
-			//gc.name = gc.lineOfText.readLine();
-	    	gc.name = "Ruth";
+			gc.name = gc.lineOfText.readLine();
+	    	//gc.name = "Ruth";
 			
 
 
@@ -73,8 +73,8 @@ public class GameClient {
 						System.out.print(hc + " | ");
 					}
 					System.out.println();
-					//selection = gc.lineOfText.readLine().toUpperCase();
-					selection = "BROWN";
+					selection = gc.lineOfText.readLine().toUpperCase();
+					//selection = "BROWN";
 					try {
 						l = new Look("HAIR", HairColour.valueOf(selection).toString());
 						selected = 1;
@@ -95,8 +95,8 @@ public class GameClient {
 						System.out.print(ec + " | ");
 					}
 					System.out.println();
-					//selection = gc.lineOfText.readLine().toUpperCase();
-					selection = "BROWN";
+					selection = gc.lineOfText.readLine().toUpperCase();
+					//selection = "BROWN";
 					try {
 						l = new Look("EYES", EyeColour.valueOf(selection).toString());
 						selected = 1;
@@ -116,8 +116,8 @@ public class GameClient {
 						System.out.print(bt + " | ");
 					}
 					System.out.println();
-					//selection = gc.lineOfText.readLine().toUpperCase();
-					selection = "AVERAGE";
+					selection = gc.lineOfText.readLine().toUpperCase();
+					//selection = "AVERAGE";
 					try {
 						l = new Look("BODY", BodyType.valueOf(selection).toString());
 						selected = 1;
@@ -146,7 +146,7 @@ public class GameClient {
 		t.start();
 		
 		Thread.sleep(2000);
-		System.out.println("player id" + gc.playerID);
+		//System.out.println("player id" + gc.playerID);
 		JSONObject JObj = createJSONCharacterMsg(character, gc);
 		csConnection.m_outgoingMsgQueue.add(JObj.toString());
 		
