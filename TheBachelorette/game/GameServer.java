@@ -209,9 +209,9 @@ public class GameServer implements Runnable {
 		String message = "";
 		System.out.println("Play Game: " + incomingJSON.toString());
 		String msg = incomingJSON.getString("Message");
-		if (p.getChallengeNumber() == 5) {
+		if (p.getNumberOfGirls() == 5) {
 			message = "You won the game!";
-			for (int i = 0; i < characters.size(); i++) {  //TODO: make the game end!
+			for (int i = 0; i < characters.size(); i++) {
 				System.out.println("PlayerID = " + p.getPlayerID());
 				if (i != Integer.parseInt(p.getPlayerID()) - 1 )
 				clientOutgoingMsgs.get(i).add("{\"Message\" : \"" + p.getName() + " won the game and got the girl!\"}");
@@ -230,11 +230,9 @@ public class GameServer implements Runnable {
 			message = "What would you like to use to impress a girl and get her number?\n" +
 					"1. Show your intelligence    2. Use a cheesy pick up line    3. Reveal the truth    4. Tell a joke" +
 					"    5. Buy her a drink\nType a number to select what to use\n";
-			
 			p.setGirl(Integer.parseInt(msg));
 			j.put("Message", message);
 			p.updateStage(2);
-			
 		} else if (stage == 2) {
 			message+= p.isChallengeComplete(Integer.parseInt(msg));
 			if (p.isChallengeComplete(Integer.parseInt(msg))) {
@@ -276,7 +274,6 @@ public class GameServer implements Runnable {
 				p.updateStage(5);
 			}
  		} else if (stage == 4) {
- 			p.updateNumberOfGirls();
  			message = "Which girl would you like to try and get another number from?\n" +
  			girlInfo(p)+"\nType a number to select a girl\n";
  			j.put("Message", message);
@@ -343,19 +340,13 @@ public class GameServer implements Runnable {
 		List<Look> aLook = new ArrayList<Look>();
 		int n;
 		List<Integer> seen = new ArrayList<Integer>();
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 10; i++) {
 			String name = "girl"+i;
 
 			// Choose things girls don't like
-			/*for (int j = 0; j < 2; j++) {
-				n = generator.nextInt(Attributes.values().length);
-				while (seen.contains(n)){
-					n = generator.nextInt(Attributes.values().length);
-				}
-				seen.add(n);
-				aList.add(new Attribute(Attributes.values()[n].toString(), 5));
-			}*/
-			aList.add(new Attribute(Attributes.CHARM.toString(), 5));
+			n = generator.nextInt(Attributes.values().length);
+			aList.add(new Attribute(Attributes.values()[n].toString(), 5));
+
 			aLook = new ArrayList<Look>();
 			n = generator.nextInt(HairColour.values().length);
 			aLook.add(new Look("HAIR", HairColour.values()[n].toString()));

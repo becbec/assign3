@@ -56,13 +56,7 @@ public class CharmChallenege implements Challenge {
         pickUpLength = pickUpLine.length;
 
         for (int i = 0; i < pickUpLength; i++) {
-            //String word = pickUpLine[i];
             challenge+=i+"."+shuffled[i]+"   ";
-            /*for (int j = 0; j < pickUpLength; j++) {
-                if (word.equals(shuffled[j])) {
-                    order+=j+" ";
-                }
-            }*/
         }
         System.out.println("Order "+order);
         message+="Charm Challenge!\n\nTo pick up a girl using your charm you will need to rearrange the pickup line " +
@@ -74,18 +68,6 @@ public class CharmChallenege implements Challenge {
 
     @Override
     public boolean checkAnswer(String answer) {
-       // String[] orderNumber = order.split(" ");
-       // String[] answerNumber = answer.split(" ");
-
-        /*if (pickUpLength != answerNumber.length) {
-            return false;
-        }
-
-        for (int i = 0; i < pickUpLength; i++) {
-            if (!orderNumber[i].equals(answerNumber[i])) {
-                return false;
-            }
-        }*/
         if (answer.equals(pickUps.get(pickUpIndex))) {
         	return true;
         }

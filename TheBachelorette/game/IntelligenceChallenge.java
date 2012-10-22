@@ -73,7 +73,7 @@ public class IntelligenceChallenge implements Challenge{
 
         for (int j = 0; j < 3; j++) {
             String tmp = words.get(generator.nextInt(words.size()));
-            while (seen.contains(seen)) {
+            while (seen.contains(tmp)) {
                 tmp = words.get(generator.nextInt(words.size()));
             }
             chosenWords += tmp+" ";

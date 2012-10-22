@@ -23,12 +23,16 @@ public class PlayerCharacter {
 		this.name = name;
 		this.attributes = new ArrayList<Attribute>(attributes);
 		this.looks = new ArrayList<Look>(looks);
-		girlsSeen = new int[7];
-		challenges = new int[7];
-		for (int i = 0; i < 7; i++) {
+		girlsSeen = new int[10];
+		challenges = new int[6];
+		for (int i = 0; i < 10; i++) {
 			girlsSeen[i] = 0;
+		}
+		
+		for (int i = 0; i < 6; i++) {
 			challenges[i] = 0;
 		}
+		
 		stage = 0;
 		challengeNumber = -1;
 		numberOfGirls = 0;
@@ -88,9 +92,9 @@ public class PlayerCharacter {
 	public void setGirlSeen() {
 		girlsSeen[currentGirl] = 1;
 		currentPoints = 0;
-		pointsNeeded+=2;
-		numberOfGirls++;
-		for (int i = 0; i < 7; i++) {
+		pointsNeeded+=5;
+		numberOfGirls+=1;
+		for (int i = 0; i < 6; i++) {
 			challenges[i] = 0;
 		}
 	}
@@ -141,10 +145,6 @@ public class PlayerCharacter {
 	public int getNumberOfGirls() {
 		return numberOfGirls;
 	}
-	
-	public void updateNumberOfGirls() {
-		numberOfGirls++;
-	}
 
 	public int getCurrentGirl() {
 		return currentGirl;
@@ -161,6 +161,7 @@ public class PlayerCharacter {
 	
 	public String updateCurrentPoints(PlayerCharacter girl) {
 		double value = 0;
+		String message = "";
 		
 		if (challengeNumber == 1) {
 			value = attributes.get(0).getAttributeValue();
@@ -182,19 +183,16 @@ public class PlayerCharacter {
 			value = value/(0.2);
 		}
 
-		for (int i = 0; i < girl.attributes.size(); i++) {
-			if (girl.attributes.get(i).getAttributeType().equals(challenge)) {
-				tmpV*=0.5;
-			}
+		if (girl.attributes.get(0).getAttributeType().equals(challenge)) {
+			tmpV*=0.5;
 		}
-
 		
 		currentPoints += value-tmpV;
 		challenges[challengeNumber] = 1;
 		
 		if (currentPoints < 0) currentPoints = 0;
 		
-		return "value = " +value+" currentPoints = "+currentPoints+ " challenge number = "+challengeNumber+" this is "+challenges[challengeNumber];
+		return message;
 	}
 
 	public double getCurrentPoints() {
