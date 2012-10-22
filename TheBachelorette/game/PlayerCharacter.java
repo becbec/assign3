@@ -33,12 +33,12 @@ public class PlayerCharacter {
 		this.attributes = new ArrayList<Attribute>(attributes);
 		this.looks = new ArrayList<Look>(looks);
 		girlsSeen = new int[10];
-		challenges = new int[6];
+		challenges = new int[10];
 		for (int i = 0; i < 10; i++) {
 			girlsSeen[i] = 0;
 		}
 		
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 10; i++) {
 			challenges[i] = 0;
 		}
 		
@@ -103,7 +103,7 @@ public class PlayerCharacter {
 		currentPoints = 0;
 		pointsNeeded+=5;
 		numberOfGirls+=1;
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < 10; i++) {
 			challenges[i] = 0;
 		}
 	}
@@ -168,7 +168,7 @@ public class PlayerCharacter {
 		return false;
 	}
 	
-	public String updateCurrentPoints(PlayerCharacter girl) {
+	public void updateCurrentPoints(PlayerCharacter girl) {
 		double value = 0;
 		String message = "";
 		
@@ -200,8 +200,7 @@ public class PlayerCharacter {
 		challenges[challengeNumber] = 1;
 		
 		if (currentPoints < 0) currentPoints = 0;
-		
-		return message;
+
 	}
 
 	public double getCurrentPoints() {
