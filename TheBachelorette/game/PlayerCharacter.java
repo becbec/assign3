@@ -196,11 +196,11 @@ public class PlayerCharacter {
 			tmpV*=0.5;
 		}
 		
-		currentPoints += value-tmpV;
+		currentPoints += value;
 		challenges[challengeNumber] = 1;
 		
-		if (currentPoints < 0) currentPoints = 0;
-
+		if (currentPoints <= 0) currentPoints = 0;
+		//return "current points are = " +currentPoints+" value = "+value;
 	}
 
 	public double getCurrentPoints() {

@@ -241,6 +241,7 @@ public class GameServer implements Runnable {
 			j.put("Message", message);
 		} else if (stage == 3) {
 			if (p.isAnswerCorrect(msg)) {
+				p.updateCurrentPoints(p);
 				message += "Congratulations, that is the correct answer!";
 				if (p.getCurrentPoints() < 10) {
 					message += " However, you are now at "+p.getCurrentPoints()+" point. You still need "+(p.getPointsNeeded()-p.getCurrentPoints())+ " points in order to get this girl's number."
