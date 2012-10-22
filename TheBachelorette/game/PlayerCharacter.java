@@ -192,9 +192,9 @@ public class PlayerCharacter {
 			value = value/(0.2);
 		}
 
-		if (girl.attributes.get(0).getAttributeType().equals(challenge)) {
+		/*if (girl.attributes.get(0).getAttributeType().equals(challenge)) {
 			tmpV*=0.5;
-		}
+		}*/
 		
 		currentPoints += value;
 		challenges[challengeNumber] = 1;
