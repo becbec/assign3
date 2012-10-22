@@ -168,7 +168,7 @@ public class PlayerCharacter {
 		return false;
 	}
 	
-	public String updateCurrentPoints(PlayerCharacter girl) {
+	public void updateCurrentPoints(PlayerCharacter girl) {
 		double value = 0;
 		String message = "";
 		
@@ -200,8 +200,7 @@ public class PlayerCharacter {
 		challenges[challengeNumber] = 1;
 		
 		if (currentPoints < 0) currentPoints = 0;
-		
-		return message;
+
 	}
 
 	public double getCurrentPoints() {

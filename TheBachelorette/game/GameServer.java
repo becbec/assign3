@@ -134,7 +134,6 @@ public class GameServer implements Runnable {
 						PlayerCharacter p = new PlayerCharacter(name, la, ll);
 						p.setPlayerID(Integer.toString(this.clientOutgoingMsgs.size() + 1));
 						characters.add(p);
-						// characters.add(Integer.parseInt(pid)-1, p);
 						
 						List<String> outgoingMsgs = new LinkedList<String>();
 						this.clientOutgoingMsgs.add(outgoingMsgs);
@@ -144,10 +143,6 @@ public class GameServer implements Runnable {
 							for (int i = 0; i < characters.size(); i++) {
 								clientOutgoingMsgs.get(i).add(playGame(characters.get(i), new JSONObject("{\"Message\" : \"\" }")).toString());
 							}
-							/*
-							client1OutgoingMsgs.add(playGame(characters.get(0), null).toString());
-							client2OutgoingMsgs.add(playGame(characters.get(1), null).toString());
-							*/
 						}
 
 						
@@ -247,7 +242,6 @@ public class GameServer implements Runnable {
 		} else if (stage == 3) {
 			if (p.isAnswerCorrect(msg)) {
 				message += "Congratulations, that is the correct answer!";
-				message += p.updateCurrentPoints(girls.get(p.getCurrentGirl()));
 				if (p.getCurrentPoints() < 10) {
 					message += " However, you are now at "+p.getCurrentPoints()+" point. You still need "+(p.getPointsNeeded()-p.getCurrentPoints())+ " points in order to get this girl's number."
 					+" You will need to choose something else to impress this girl\nWhat would you like to use?\n 1. Show your intelligence (INTELLIGENCE)   2. Use a cheesy pick up line (CHARM)  " +
