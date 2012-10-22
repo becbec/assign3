@@ -129,12 +129,11 @@ public class HumourChallenege implements Challenge{
             challenge+= i+". "+shuffled[i]+'\n';
         }
         System.out.println("order = "+order);
-        message += "Humour Challenge\nIn this challenge you will use your homour to try and get a number off a girl" +
-                "To do this you will need to match the riddle question with the riddle Answer. Do this by" +
-                "typing the order the answer should be in to match up with the correct question. Type each number followed by" +
-                "a space. Eg 1 4 2 5 3\n\n" + challenge+"\n\nType your answer here: \n";
+        message += "Humour Challenge\nIn this challenge you will use your humour to try and get the girl's number.\n" +
+                "To do this you will need to match the riddle question with the riddle answer.\n" +
+                "Type each answer number followed by a space in the correct order. Eg 1 4 2 5 3\n\n" + challenge+"\n\nType your answer here: \n";
 
-        return message;  //To change body of implemented methods use File | Settings | File Templates.
+        return message;  
     }
 
     @Override
