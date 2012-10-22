@@ -35,7 +35,7 @@ public class GameServer implements Runnable {
 	
 	//TODO:Remove this and let this change as player levels up???
 	public enum Clothing {
-		BEACHWEAR, CASUALWEAR, CLUBWEAR, SUIT, TUXEDO  
+		BEACHWEAR, CASUALWEAR, CLUBWEAR, SUIT, TUXEDO, NAKED  
 	}
 	
 	MessageServer listenServer;
@@ -229,7 +229,6 @@ public class GameServer implements Runnable {
 			j.put("Message", message);
 			p.updateStage(2);
 		} else if (stage == 2) {
-			message+= p.isChallengeComplete(Integer.parseInt(msg));
 			if (p.isChallengeComplete(Integer.parseInt(msg))) {
 				message = "You have already used this method to impress this girl. Choose something else to try and impress the girl further"+
 				"1. Show your intelligence (INTELLIGENCE)   2. Use a cheesy pick up line (CHARM)   3. Reveal the truth (HONESTY)   4. Tell a joke (HUMOUR)" +
