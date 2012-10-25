@@ -128,7 +128,7 @@ public class HumourChallenege implements Challenge{
         for (int i = 0; i < 5; i++) {
             challenge+= i+". "+shuffled[i]+'\n';
         }
-        System.out.println("order = "+order);
+
         message += "Humour Challenge\nIn this challenge you will use your humour to try and get the girl's number.\n" +
                 "To do this you will need to match the riddle question with the riddle answer.\n" +
                 "Type each answer number followed by a space in the correct order. Eg 1 4 2 5 3\n\n" + challenge+"\n\nType your answer here: \n";

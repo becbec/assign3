@@ -107,7 +107,6 @@ public class HonestyChallenge implements Challenge {
             }
         }
 
-        System.out.println("false fact = "+falseFact);
         message+= "Honesty Challenge\n\nTo pick up a girl using honesty you need to figure out which is the incorrect " +
                 "fact among all of the correct facts. \nTo do so type the number of the fact that you think is incorrect\n\n" +
                 challenge+"\n\nType your answer here\n";
