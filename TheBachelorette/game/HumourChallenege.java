@@ -77,7 +77,7 @@ public class HumourChallenege implements Challenge{
         rAnswers.add("It couldn't ketch-up!");
         rAnswers.add("'Cause he didn't have the guts!");
         rAnswers.add("I want my quarter back!");
-        rAnswers.add("Why can't a nose be twelve inches long?");
+        rAnswers.add("Because then it would be a foot!");
         rAnswers.add("Nothing. It just waved!");
         rAnswers.add("A telephone!");
         rAnswers.add("A dead end!");

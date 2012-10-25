@@ -60,7 +60,7 @@ public class CharmChallenege implements Challenge {
         }
         System.out.println("Order "+order);
         message+="Charm Challenge!\n\nTo pick up a girl using your charm you will need to rearrange the pickup line " +
-                "so that it is in the correct order\nTo do this, type the line exactly how it should appear." +
+                "so that it is in the correct order\nTo do this, type the line exactly how it should appear.\n" +
                 " Once you think you have the write answer press enter\n\n"+challenge+"\n\nType your answer here: \n";
 
         return message;

@@ -32,8 +32,8 @@ public class GenerosityChallenge implements Challenge {
         }
 
         System.out.println("amount is "+result);
-        message +=  "Generosity Challenge\n\nTo pick up a girl using generrsity you need to buy her a drink." +
-                "But in order to buy her a drink you will need to calculate how much it is going to cost you." +
+        message +=  "Generosity Challenge\n\nTo pick up a girl using generosity you need to buy her a drink.\n" +
+                "But in order to buy her a drink you will need to calculate how much it is going to cost you.\n" +
                 "To complete this challenge quickly add up these 10 numbers\n\n"+numbers+"\n\nType your answer here: \n";
 
         return message;

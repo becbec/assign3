@@ -86,7 +86,7 @@ public class IntelligenceChallenge implements Challenge{
             challenge+= "  ";
         }
 
-        message += chosenWords+"Intelligence Challenge\n\nTo pick up a girl using your intelligence you will need to unscramble 3 words.\n" +
+        message += "Intelligence Challenge\n\nTo pick up a girl using your intelligence you will need to unscramble 3 words.\n" +
                 "Type each word followed by a space then press Enter\n\n"+challenge+"\n\nType the answer here: \n";
 
 
