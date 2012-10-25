@@ -45,16 +45,11 @@ public class GameClient {
 		
 	    try { //TODO: error checking for server/port
 	    	System.out.println("Please enter the host server");
-			//String server = gc.lineOfText.readLine();
-	    	String server = "localhost"; //TODO: Remove
-			//System.out.println("Please enter the host port");
+			String server = gc.lineOfText.readLine();
 			String temp = "";
-			//String temp = gc.lineOfText.readLine();
-			//int port = Integer.parseInt(temp);
 			int port = 1338;
 	    	System.out.println("Please enter your name");
 			gc.name = gc.lineOfText.readLine();
-	    	//gc.name = "Ruth";
 			
 
 

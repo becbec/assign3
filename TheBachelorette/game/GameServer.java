@@ -35,7 +35,7 @@ public class GameServer implements Runnable {
 	
 	//TODO:Remove this and let this change as player levels up???
 	public enum Clothing {
-		BEACHWEAR, CASUALWEAR, CLUBWEAR, SUIT, TUXEDO  
+		BEACHWEAR, CASUALWEAR, CLUBWEAR, SUIT, TUXEDO, NAKED  
 	}
 	
 	MessageServer listenServer;

@@ -47,6 +47,7 @@ public class PlayerCharacter {
 		numberOfGirls = 0;
 		pointsNeeded = 5;
 		currentPoints = 0;
+		clothing = 0;
 	}
 
 	public List<Attribute> getAttributes() {
