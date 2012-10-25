@@ -33,7 +33,7 @@ public class GameServer implements Runnable {
 		ATHLETIC, SKINNY, MUSCULAR, AVERAGE, OVERWEIGHT
 	}
 	
-	//TODO:Remove this and let this change as player levels up???
+
 	public enum Clothing {
 		BEACHWEAR, CASUALWEAR, CLUBWEAR, SUIT, TUXEDO, NAKED  
 	}
@@ -91,14 +91,7 @@ public class GameServer implements Runnable {
 			if (!listenServer.m_incomingMsgQueue.isEmpty()) {
 				// parse incoming message queue
 				String msg = listenServer.m_incomingMsgQueue.remove();				
-//				try {
-//					JSONObject j = new JSONObject(msg);
-//					if (j.has("Character")) {
-//						
-//					}
-//				} catch (JSONException e) {
-//				}
-//				
+
 				if (!msg.equals("{\"Blah\" : \"Blah\"}")) {
 					System.out.println(msg);
 				
@@ -109,7 +102,6 @@ public class GameServer implements Runnable {
 				try {
 					j = new JSONObject(msg);
 					if (j.has("Character")) { //Storing the characters players have created
-						// String pid = j.getString("PlayerID");
 						JSONObject jo = j.getJSONObject("Character");
 						String name = jo.getString("Name");
 						List<Attribute> la = new ArrayList<Attribute>();
@@ -156,7 +148,7 @@ public class GameServer implements Runnable {
 					e.printStackTrace();
 				}
 			}
-				// TODO: make more generic
+				// TODO: Remove
 				GameServer.m_client1GameEndTime = Calendar.getInstance();
 				GameServer.m_client1GameEndTime.add(Calendar.SECOND, 30);
 			}
@@ -202,7 +194,7 @@ public class GameServer implements Runnable {
 		JSONObject j = new JSONObject();
 		String content ="";
 		String message = "";
-		System.out.println("Play Game: " + incomingJSON.toString());
+		//System.out.println("Play Game: " + incomingJSON.toString());
 		String msg = incomingJSON.getString("Message");
 		if (p.getNumberOfGirls() == 5) {
 			message = "You won the game!";
@@ -217,57 +209,73 @@ public class GameServer implements Runnable {
 					girlInfo(p)+"\nType a number to select a girl\n";
 			j.put("Message", message);
 			p.updateStage(1);
-		} else if (stage == 1 && p.isGirlSeen(Integer.parseInt(msg))) {
-			message = "You have already gotten that girl's number!\nChoose another girl to approach.\n" +
-			girlInfo(p)+"\n";
-			j.put("Message", message);
-		} else if (stage == 1 && !p.isGirlSeen(Integer.parseInt(msg))) {
-			message = "What would you like to use to impress this girl?\n" +
+		} else if (stage == 1) {
+			try {
+			
+				if (p.isGirlSeen(Integer.parseInt(msg))) {
+			
+				message = "You have already gotten that girl's number!\nChoose another girl to approach.\n" +
+				girlInfo(p)+"\n";
+				j.put("Message", message);
+				} else if (!p.isGirlSeen(Integer.parseInt(msg))) {
+					message = "What would you like to use to impress this girl?\n" +
+							"1. Show your intelligence (INTELLIGENCE)   2. Use a cheesy pick up line (CHARM)   3. Reveal the truth (HONESTY)   4. Tell a joke (HUMOUR)" +
+							"    5. Buy her a drink (GENEROSITY)\nType a number to select which to use\n";
+					p.setGirl(Integer.parseInt(msg));
+					j.put("Message", message);
+					p.updateStage(2);
+				}
+			} catch (NumberFormatException e) {
+				message = "Please make sure to enter numbers only\n";
+				j.put("Message", message);
+			}
+		} else if (stage == 2) {
+			try {
+				if (p.isChallengeComplete(Integer.parseInt(msg))) {
+					message = "You have already used this method to impress this girl. Choose something else to try and impress the girl further"+
 					"1. Show your intelligence (INTELLIGENCE)   2. Use a cheesy pick up line (CHARM)   3. Reveal the truth (HONESTY)   4. Tell a joke (HUMOUR)" +
 					"    5. Buy her a drink (GENEROSITY)\nType a number to select which to use\n";
-			p.setGirl(Integer.parseInt(msg));
-			j.put("Message", message);
-			p.updateStage(2);
-		} else if (stage == 2) {
-			if (p.isChallengeComplete(Integer.parseInt(msg))) {
-				message = "You have already used this method to impress this girl. Choose something else to try and impress the girl further"+
-				"1. Show your intelligence (INTELLIGENCE)   2. Use a cheesy pick up line (CHARM)   3. Reveal the truth (HONESTY)   4. Tell a joke (HUMOUR)" +
-				"    5. Buy her a drink (GENEROSITY)\nType a number to select which to use\n";
-			} else {
-				message += p.initChallenege(Integer.parseInt(msg));
-				p.updateStage(3);
+				} else {
+					message += p.initChallenege(Integer.parseInt(msg));
+					p.updateStage(3);
+				}
+			} catch (NumberFormatException e) {
+				message = "Please make sure to enter numbers only\n";
 			}
 			j.put("Message", message);
 		} else if (stage == 3) {
-			if (p.isAnswerCorrect(msg)) {
-				p.updateCurrentPoints(p);
-				message += "Congratulations, that is the correct answer!";
-				if (p.getCurrentPoints() < 10) {
-					message += " However, you are now at "+p.getCurrentPoints()+" point. You still need "+(p.getPointsNeeded()-p.getCurrentPoints())+ " points in order to get this girl's number."
-					+" You will need to choose something else to impress this girl\nWhat would you like to use?\n 1. Show your intelligence (INTELLIGENCE)   2. Use a cheesy pick up line (CHARM)  " +
-							" 3. Reveal the truth (HONESTY)   4. Tell a joke (HUMOUR)   5. Buy her a drink (GENEROSITY)\nType a number to select which to use\n";
-					p.updateStage(2);
-				}else {
-					message+=" You have been successful in acquiring this girl's phone number! \n";
-					p.setClothing(p.getClothing() +1);
-					message+="Your clothing has been upgraded to " + Clothing.values()[p.getClothing()] + ".\nPress Enter to continue...\n";
-					
-					//Send message to other player(s) that this player got a girl's number
-					//loop through queues, for all queues not including this one, add message
-					for (int i = 0; i < characters.size(); i++) {  
-						//System.out.println("PlayerID = " + p.getPlayerID());
-						if (i != Integer.parseInt(p.getPlayerID()) - 1 )
-						clientOutgoingMsgs.get(i).add("{\"Message\" : \"" + p.getName() + " got a girl's number! Don't get left behind!\"}");
+			if (!msg.equals("")) { //TODO: check this
+				if (p.isAnswerCorrect(msg)) {
+					p.updateCurrentPoints(p);
+					message += "Congratulations, that is the correct answer!";
+					if (p.getCurrentPoints() < 10) {
+						message += " However, you are now at "+p.getCurrentPoints()+" point. You still need "+(p.getPointsNeeded()-p.getCurrentPoints())+ " points in order to get this girl's number."
+						+" You will need to choose something else to impress this girl\nWhat would you like to use?\n 1. Show your intelligence (INTELLIGENCE)   2. Use a cheesy pick up line (CHARM)  " +
+								" 3. Reveal the truth (HONESTY)   4. Tell a joke (HUMOUR)   5. Buy her a drink (GENEROSITY)\nType a number to select which to use\n";
+						p.updateStage(2);
+					}else {
+						message+=" You have been successful in acquiring this girl's phone number! \n";
+						p.setClothing(p.getClothing() +1);
+						message+="Your clothing has been upgraded to " + Clothing.values()[p.getClothing()] + ".\nPress Enter to continue...\n";
+						
+						//Send message to other player(s) that this player got a girl's number
+						//loop through queues, for all queues not including this one, add message
+						for (int i = 0; i < characters.size(); i++) {  
+							//System.out.println("PlayerID = " + p.getPlayerID());
+							if (i != Integer.parseInt(p.getPlayerID()) - 1 )
+							clientOutgoingMsgs.get(i).add("{\"Message\" : \"" + p.getName() + " got a girl's number! Don't get left behind!\"}");
+						}
+						p.updateStage(6);
+						p.setGirlSeen();
 					}
-					p.updateStage(6);
-					p.setGirlSeen();
+					j.put("Message", message);
+				
+				} else if (!p.isAnswerCorrect(msg)) {
+					message = "That is not the correct answer.\n Would you like to: \n1. Try again at using this challenge to impress a girl, or\n" +
+							"2. Go back impress this girl using something else. Type a number to select your choice.";
+					j.put("Message", message);
+					p.updateStage(5);
 				}
-				j.put("Message", message);
-			} else if (!p.isAnswerCorrect(msg)) {
-				message = "That is not the correct answer.\n Would you like to: \n1. Try again at using this challenge to impress a girl, or\n" +
-						"2. Go back impress this girl using something else. Type a number to select your choice.";
-				j.put("Message", message);
-				p.updateStage(5);
 			}
  		} else if (stage == 4) {
  			message = "Which girl would you like to try and get another number from?\n" +
@@ -275,16 +283,18 @@ public class GameServer implements Runnable {
  			j.put("Message", message);
  			p.updateStage(1);
  		} else if (stage == 5) {
- 			if (Integer.parseInt(msg) == 1) {
- 				message = p.initChallenege(p.getChallengeNumber());
- 				j.put("Message", message);
- 				p.updateStage(3);
- 			} else if (Integer.parseInt(msg) == 2) {
- 				message = "What would you like to use to impress a girl and get her number?\n" +
-				"1. Show your intelligence (INTELLIGENCE)   2. Use a cheesy pick up line (CHARM)   3. Reveal the truth (HONESTY)   4. Tell a joke (HUMOUR)" +
-				"    5. Buy her a drink (GENEROSITY)\nType a number to select what to use\n";
- 				j.put("Message", message);
- 				p.updateStage(2);
+ 			if (!msg.equals("")) { //TODO: Check this
+	 			if (Integer.parseInt(msg) == 1) {
+	 				message = p.initChallenege(p.getChallengeNumber());
+	 				j.put("Message", message);
+	 				p.updateStage(3);
+	 			} else if (Integer.parseInt(msg) == 2) {
+	 				message = "What would you like to use to impress a girl and get her number?\n" +
+					"1. Show your intelligence (INTELLIGENCE)   2. Use a cheesy pick up line (CHARM)   3. Reveal the truth (HONESTY)   4. Tell a joke (HUMOUR)" +
+					"    5. Buy her a drink (GENEROSITY)\nType a number to select what to use\n";
+	 				j.put("Message", message);
+	 				p.updateStage(2);
+	 			}
  			}
  		} else if (stage == 6) {
  			//give more points to add to attributes
